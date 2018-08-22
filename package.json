@@ -1,0 +1,32 @@
+{
+  "name": "reinvented-color-wheel",
+  "version": "0.0.0",
+  "description": "A vanilla-js color picker inspired by Farbtastic.",
+  "main": "umd/ReinventedColorWheel.js",
+  "module": "es/ReinventedColorWheel.js",
+  "scripts": {
+    "clean": "rimraf es/ umd/",
+    "build": "npm run clean && npm run build:es && npm run build:umd && npm run build:umd:min && npm run build:demo",
+    "build:es": "tsc -p . --outDir ./es",
+    "build:umd": "rollup -c -f umd -n ReinventedColorWheel -i es/ReinventedColorWheel.js -o umd/ReinventedColorWheel.js",
+    "build:umd:min": "uglifyjs -m -c join_vars=true -o umd/ReinventedColorWheel.min.js umd/ReinventedColorWheel.js",
+    "build:demo": "node -e \"require('fs').copyFileSync('umd/ReinventedColorWheel.min.js','docs/demo/ReinventedColorWheel.min.js')\""
+  },
+  "keywords": [
+    "color",
+    "wheel",
+    "picker",
+    "color-picker",
+    "vanilla",
+    "vanilla-js"
+  ],
+  "author": "",
+  "license": "WTFPL",
+  "devDependencies": {
+    "rimraf": "^2.6.2",
+    "rollup": "^0.64.1",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "typescript": "^3.0.1",
+    "uglify-js": "^3.4.7"
+  }
+}
