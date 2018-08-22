@@ -2,15 +2,15 @@
   "name": "reinvented-color-wheel",
   "version": "0.0.0",
   "description": "A vanilla-js color picker inspired by Farbtastic.",
-  "main": "umd/ReinventedColorWheel.js",
-  "module": "es/ReinventedColorWheel.js",
+  "main": "reinvented-color-wheel.js",
+  "module": "reinvented-color-wheel.mjs",
+  "types": "reinvented-color-wheel.d.ts",
   "scripts": {
-    "clean": "rimraf es/ umd/",
-    "build": "npm run clean && npm run build:es && npm run build:umd && npm run build:umd:min && npm run build:demo",
-    "build:es": "tsc -p . --outDir ./es",
-    "build:umd": "rollup -c -f umd -n ReinventedColorWheel -i es/ReinventedColorWheel.js -o umd/ReinventedColorWheel.js",
-    "build:umd:min": "uglifyjs -m -c join_vars=true -o umd/ReinventedColorWheel.min.js umd/ReinventedColorWheel.js",
-    "build:demo": "node -e \"require('fs').copyFileSync('umd/ReinventedColorWheel.min.js','docs/demo/ReinventedColorWheel.min.js')\""
+    "clean": "rimraf reinvented-color-wheel.mjs reinvented-color-wheel.js reinvented-color-wheel.min.js reinvented-color-wheel.d.ts",
+    "build": "npm run clean && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:es": "tsc -p . --outDir ./ && node -e \"require('fs').renameSync('reinvented-color-wheel.js','reinvented-color-wheel.mjs')\"",
+    "build:umd": "rollup -c -f umd -n ReinventedColorWheel -i reinvented-color-wheel.mjs -o reinvented-color-wheel.js",
+    "build:umd:min": "uglifyjs -m -c join_vars=true -o reinvented-color-wheel.min.js reinvented-color-wheel.js"
   },
   "keywords": [
     "color",

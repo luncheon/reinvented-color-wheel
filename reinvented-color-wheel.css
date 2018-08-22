@@ -1,0 +1,30 @@
+.reinvented-color-wheel, .reinvented-color-wheel * {
+  touch-action: manipulation;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reinvented-color-wheel {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.reinvented-color-wheel--hue-wheel {
+  border-radius: 50%;
+}
+
+.reinvented-color-wheel--hue-handle {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px black inset;
+}
+
+.reinvented-color-wheel--hue-inner-circle {
+  position: absolute;
+  border-radius: 50%;
+}
