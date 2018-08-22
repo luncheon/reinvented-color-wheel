@@ -148,7 +148,7 @@ export default class ReinventedColorWheel {
     handleStyle.position = 'absolute'
     handleStyle.borderRadius = '50%'
     handleStyle.border = '2px solid white'
-    handleStyle.boxShadow = '0 0 0 1px inset black'
+    handleStyle.boxShadow = '0 0 0 1px black inset'
     handleStyle.boxSizing = 'border-box'
     handleStyle.width = handleElement.style.height = `${handleDiameter}px`
     handleStyle.marginLeft = handleStyle.marginTop = `${-handleDiameter / 2}px`
