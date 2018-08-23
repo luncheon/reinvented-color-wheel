@@ -4,7 +4,7 @@ var onDragStart;
 var onDragMove;
 var dragging;
 var pointerEventSupported = 'PointerEvent' in window;
-if (pointerEventSupported && 'ontouchend' in window) {
+if (!pointerEventSupported && 'ontouchend' in window) {
     onDragStart = function (element, callback) { return element.addEventListener('touchstart', function (event) { event.preventDefault(); callback(event.targetTouches[0]); }); };
     onDragMove = function (element, callback) { return element.addEventListener('touchmove', function (event) { event.preventDefault(); callback(event.targetTouches[0]); }); };
 }

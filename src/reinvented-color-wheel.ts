@@ -6,7 +6,7 @@ let onDragMove:  (element: HTMLElement, callback: (event: { clientX: number, cli
 
 let dragging: HTMLElement | undefined
 const pointerEventSupported = 'PointerEvent' in window
-if (pointerEventSupported && 'ontouchend' in window) {
+if (!pointerEventSupported && 'ontouchend' in window) {
   onDragStart = (element, callback) => element.addEventListener('touchstart', event => { event.preventDefault(); callback(event.targetTouches[0]) })
   onDragMove  = (element, callback) => element.addEventListener('touchmove',  event => { event.preventDefault(); callback(event.targetTouches[0]) })
 } else {
