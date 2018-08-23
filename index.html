@@ -8,17 +8,34 @@
     <link rel="stylesheet" href="reinvented-color-wheel.css">
   </head>
   <body>
-    <input id="color">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div id="container"></div>
+      <input id="selected" spellcheck="false" style="border: none; border-radius: 4px; margin-top: 1em; padding: .5em 1em; text-align: right; font-family: monospace; color: white; text-shadow: 1px 1px 1px black;">
+    </div>
     <script src="reinvented-color-wheel.min.js"></script>
     <script>
-      new ReinventedColorWheel({
-        parentElement: document.body,
-        onChange: function (hsl) {
-          var input = document.getElementById('color')
-          input.style.backgroundColor = 'hsl(' + hsl.h + ',' + hsl.s + '%,' + hsl.l + '%)'
-          input.value = hsl.h
-        },
-      })
+      (function () {
+        var selected = document.getElementById('selected')
+
+        new ReinventedColorWheel({
+          parentElement: document.getElementById('container'),
+          wheelDiameter: 300,
+          wheelThickness: 30,
+          handleDiameter: 24,
+          onChange: function (hsl) {
+            var hslString = 'hsl(' + padStart(hsl.h, 3) + ', ' + padStart(hsl.s, 3) + '%, ' + padStart(hsl.l, 3) + '%)'
+            selected.style.backgroundColor = hslString
+            selected.value = hslString
+          },
+        })
+
+        function padStart(s, len) {
+          s = String(s)
+          while (s.length < len)
+            s = ' ' + s
+          return s
+        }
+      })()
     </script>
   </body>
 </html>

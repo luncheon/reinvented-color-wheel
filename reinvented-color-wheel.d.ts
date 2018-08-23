@@ -11,6 +11,7 @@ export interface ReinventedColorWheelOptions extends Partial<HSL> {
     readonly onChange?: (hsl: HSL) => any;
 }
 export default class ReinventedColorWheel {
+    private options;
     static defaultOptions: {
         h: number;
         s: number;
@@ -27,14 +28,20 @@ export default class ReinventedColorWheel {
     wheelThickness: number;
     handleDiameter: number;
     onChange: (hsl: HSL) => any;
-    containerElement: HTMLElement;
+    containerElement: HTMLDivElement;
     hueWheelElement: HTMLCanvasElement;
-    hueHandleElement: HTMLElement;
+    hueHandleElement: HTMLDivElement;
+    hueInnerCircleElement: HTMLDivElement;
+    svSpaceElement: HTMLCanvasElement;
+    svHandleElement: HTMLDivElement;
     constructor(options: ReinventedColorWheelOptions);
     setHSL(hsl: Partial<HSL>): void;
     private _redrawHueWheel;
+    private _redrawSvSpace;
     private _redrawHueHandle;
+    private _redrawSvHandle;
     private _onMoveHueHandle;
+    private _onMoveSvHandle;
 }
 declare function noop(): void;
 export {};

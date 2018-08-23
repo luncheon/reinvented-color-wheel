@@ -15,7 +15,8 @@
   border-radius: 50%;
 }
 
-.reinvented-color-wheel--hue-handle {
+.reinvented-color-wheel--hue-handle,
+.reinvented-color-wheel--sv-handle {
   position: absolute;
   box-sizing: border-box;
   pointer-events: none;
@@ -27,4 +28,18 @@
 .reinvented-color-wheel--hue-inner-circle {
   position: absolute;
   border-radius: 50%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.reinvented-color-wheel--sv-space {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }
