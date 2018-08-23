@@ -3,19 +3,15 @@ import hsv2hsl from 'pure-color/convert/hsv2hsl';
 var onDragStart;
 var onDragMove;
 var dragging;
-if ('PointerEvent' in window) {
-    onDragStart = function (element, callback) { return element.addEventListener('pointerdown', function (event) { return (dragging = element, callback(event)); }); };
-    onDragMove = function (element, callback) { return addEventListener('pointermove', function (event) { return dragging === element && callback(event); }); };
-    addEventListener('pointerup', function () { return dragging = undefined; });
-}
-else if ('ontouchend' in window) {
-    onDragStart = function (element, callback) { return element.addEventListener('touchstart', function (event) { return (event.preventDefault(), callback(event.targetTouches[0])); }); };
-    onDragMove = function (element, callback) { return element.addEventListener('touchmove', function (event) { return (event.preventDefault(), callback(event.targetTouches[0])); }); };
+var pointerEventSupported = 'PointerEvent' in window;
+if (pointerEventSupported && 'ontouchend' in window) {
+    onDragStart = function (element, callback) { return element.addEventListener('touchstart', function (event) { event.preventDefault(); callback(event.targetTouches[0]); }); };
+    onDragMove = function (element, callback) { return element.addEventListener('touchmove', function (event) { event.preventDefault(); callback(event.targetTouches[0]); }); };
 }
 else {
-    onDragStart = function (element, callback) { return element.addEventListener('mousedown', function (event) { return (dragging = element, callback(event)); }); };
-    onDragMove = function (element, callback) { return addEventListener('mousemove', function (event) { return dragging === element && callback(event); }); };
-    addEventListener('mouseup', function () { return dragging = undefined; });
+    onDragStart = function (element, callback) { return element.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) { dragging = element; callback(event); }); };
+    onDragMove = function (element, callback) { return addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove', function (event) { dragging === element && callback(event); }); };
+    addEventListener(pointerEventSupported ? 'pointerup' : 'mouseup', function () { return dragging = undefined; });
 }
 var defaultOptions = {
     h: 0,
@@ -24,7 +20,7 @@ var defaultOptions = {
     wheelDiameter: 200,
     wheelThickness: 20,
     handleDiameter: 16,
-    onChange: noop,
+    onChange: function () { },
 };
 var ReinventedColorWheel = /** @class */ (function () {
     function ReinventedColorWheel(options) {
@@ -64,37 +60,34 @@ var ReinventedColorWheel = /** @class */ (function () {
         {
             var svSpaceElement = this.svSpaceElement;
             var onMoveSvHandle = this._onMoveSvHandle.bind(this);
-            svSpaceElement.width = svSpaceElement.height = (wheelDiameter - wheelThickness - wheelThickness) * Math.sqrt(2) * .5;
+            svSpaceElement.width = svSpaceElement.height = (wheelDiameter - wheelThickness - wheelThickness) * Math.sqrt(2) / 2;
             onDragStart(svSpaceElement, onMoveSvHandle);
             onDragMove(svSpaceElement, onMoveSvHandle);
         }
         this.setHSL({
-            h: typeof options.h === 'number' ? options.h : defaultOptions.h,
-            s: typeof options.s === 'number' ? options.s : defaultOptions.s,
-            l: typeof options.l === 'number' ? options.l : defaultOptions.l,
+            h: isFiniteNumber(options.h) ? options.h : defaultOptions.h,
+            s: isFiniteNumber(options.s) ? options.s : defaultOptions.s,
+            l: isFiniteNumber(options.l) ? options.l : defaultOptions.l,
         });
     }
     ReinventedColorWheel.prototype.setHSL = function (hsl) {
-        var svChanged;
-        if (typeof hsl.s === 'number' && hsl.s !== this.s) {
-            this.s = limitInt(hsl.s, 0, 100);
-            svChanged = true;
+        var oldH = this.h;
+        var oldS = this.s;
+        var oldL = this.l;
+        isFiniteNumber(hsl.h) && (this.h = positiveIntModulo(hsl.h, 360));
+        isFiniteNumber(hsl.s) && (this.s = limit_0_100(hsl.s));
+        isFiniteNumber(hsl.l) && (this.l = limit_0_100(hsl.l));
+        var hueChanged = oldH !== this.h;
+        var slChanged = oldS !== this.s || oldL !== this.l;
+        if (hueChanged) {
+            this._redrawHueHandle();
+            this._redrawSvSpace();
         }
-        if (typeof hsl.l === 'number' && hsl.l !== this.l) {
-            this.l = limitInt(hsl.l, 0, 100);
-            svChanged = true;
-        }
-        if (svChanged) {
+        if (slChanged) {
             this._redrawHueWheel();
             this._redrawSvHandle();
         }
-        if (typeof hsl.h === 'number' && hsl.h !== this.h) {
-            this.h = positiveIntModulo(hsl.h, 360);
-            this._redrawHueHandle();
-            this._redrawSvSpace();
-            this.onChange(this);
-        }
-        else if (svChanged) {
+        if (hueChanged || slChanged) {
             this.onChange(this);
         }
     };
@@ -116,13 +109,14 @@ var ReinventedColorWheel = /** @class */ (function () {
         var sideLength = svSpaceElement.width;
         var cellWidth = sideLength / 100;
         var ctx = svSpaceElement.getContext('2d');
+        var h = this.h;
         ctx.clearRect(0, 0, sideLength, sideLength);
         for (var i = 0; i < 100; i++) {
             var gradient = ctx.createLinearGradient(0, 0, 0, sideLength);
-            var color0 = hsv2hsl([this.h, i, 100]);
-            var color1 = hsv2hsl([this.h, i, 0]);
-            gradient.addColorStop(0, "hsl(" + color0[0] + "," + color0[1] + "%," + color0[2] + "%)");
-            gradient.addColorStop(1, "hsl(" + color1[0] + "," + color1[1] + "%," + color1[2] + "%)");
+            var color0 = hsv2hsl([h, i, 100]);
+            var color1 = hsv2hsl([h, i, 0]);
+            gradient.addColorStop(0, "hsl(" + h + "," + color0[1] + "%," + color0[2] + "%)");
+            gradient.addColorStop(1, "hsl(" + h + "," + color1[1] + "%," + color1[2] + "%)");
             ctx.fillStyle = gradient;
             ctx.fillRect((i * cellWidth) | 0, 0, (cellWidth + 1) | 0, sideLength);
         }
@@ -131,13 +125,16 @@ var ReinventedColorWheel = /** @class */ (function () {
         var center = this.wheelDiameter / 2;
         var wheelRadius = center - this.wheelThickness / 2;
         var angle = (this.h - 90) * Math.PI / 180;
-        this.hueHandleElement.style.left = wheelRadius * Math.cos(angle) + center + "px";
-        this.hueHandleElement.style.top = wheelRadius * Math.sin(angle) + center + "px";
+        var hueHandleStyle = this.hueHandleElement.style;
+        hueHandleStyle.left = wheelRadius * Math.cos(angle) + center + "px";
+        hueHandleStyle.top = wheelRadius * Math.sin(angle) + center + "px";
     };
     ReinventedColorWheel.prototype._redrawSvHandle = function () {
         var hsv = hsl2hsv([this.h, this.s, this.l]);
-        this.svHandleElement.style.left = this.svSpaceElement.offsetLeft + this.svSpaceElement.offsetWidth * hsv[1] / 100 + "px";
-        this.svHandleElement.style.top = this.svSpaceElement.offsetTop + this.svSpaceElement.offsetHeight * (1 - hsv[2] / 100) + "px";
+        var svSpaceElement = this.svSpaceElement;
+        var svHandleStyle = this.svHandleElement.style;
+        svHandleStyle.left = svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * hsv[1] / 100 + "px";
+        svHandleStyle.top = svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - hsv[2] / 100) + "px";
     };
     ReinventedColorWheel.prototype._onMoveHueHandle = function (event) {
         var hueWheelRect = this.hueWheelElement.getBoundingClientRect();
@@ -149,23 +146,24 @@ var ReinventedColorWheel = /** @class */ (function () {
     };
     ReinventedColorWheel.prototype._onMoveSvHandle = function (event) {
         var svSpaceRect = this.svSpaceElement.getBoundingClientRect();
-        var x = limitInt(event.clientX - svSpaceRect.left, 0, svSpaceRect.width - 1);
-        var y = limitInt(event.clientY - svSpaceRect.top, 0, svSpaceRect.height - 1);
-        var hsl = hsv2hsl([this.h, (100 * x / svSpaceRect.width) | 0, (100 - 100 * y / svSpaceRect.height) | 0]);
+        var s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width;
+        var v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height;
+        var hsl = hsv2hsl([this.h, s, v]);
         this.setHSL({ s: hsl[1], l: hsl[2] });
     };
     ReinventedColorWheel.defaultOptions = defaultOptions;
     return ReinventedColorWheel;
 }());
 export default ReinventedColorWheel;
-function limitInt(value, min, max) {
-    return Math.min(Math.max(value | 0, min), max);
+function isFiniteNumber(n) {
+    return typeof n === 'number' && isFinite(n);
+}
+function limit_0_100(value) {
+    return value < 0 ? 0 : value > 100 ? 100 : (value + .5) | 0;
 }
 function positiveIntModulo(value, divisor) {
-    var modulo = (value | 0) % divisor;
+    var modulo = ((value + .5) | 0) % divisor;
     return modulo < 0 ? modulo + divisor : modulo;
-}
-function noop() {
 }
 function preventDefault(event) {
     event.preventDefault();

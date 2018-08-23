@@ -19,7 +19,7 @@ export default class ReinventedColorWheel {
         wheelDiameter: number;
         wheelThickness: number;
         handleDiameter: number;
-        onChange: typeof noop;
+        onChange: () => void;
     };
     h: number;
     s: number;
@@ -43,5 +43,3 @@ export default class ReinventedColorWheel {
     private _onMoveHueHandle;
     private _onMoveSvHandle;
 }
-declare function noop(): void;
-export {};
