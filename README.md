@@ -59,10 +59,8 @@ var colorWheel = new ReinventedColorWheel({
   wheelThickness: 20,
   handleDiameter: 16,
   onChange: function (color) {
-    var hsl = color.hsl
-    console.log(hsl[0], hsl[1], hsl[2])
-    var hsv = color.hsv
-    console.log(hsv[0], hsv[1], hsv[2])
+    console.log('hsl:', color.hsl[0], color.hsl[1], color.hsl[2]);
+    console.log('hsv:', color.hsv[0], color.hsv[1], color.hsv[2]);
   },
 });
 
@@ -70,13 +68,13 @@ var colorWheel = new ReinventedColorWheel({
 colorWheel.setHSL(120, 100, 50);
 
 // set color in HSV color space
-colorWheel.setHSV(240, 100, 50);
+colorWheel.setHSV(240, 100, 100);
 
 // get color in HSL color space
-console.log(colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
+console.log('hsl:', colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
 
 // get color in HSV color space
-console.log(colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
+console.log('hsv:', colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
 ```
 
 
