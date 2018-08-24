@@ -1,6 +1,6 @@
 # Reinvented Color Wheel
 
-HSV color picker inspired by [Farbtastic Color Picker](https://acko.net/blog/farbtastic-jquery-color-picker-plug-in/).  
+A vanilla-js HSV color picker inspired by [Farbtastic Color Picker](https://acko.net/blog/farbtastic-jquery-color-picker-plug-in/).  
 [Demo](https://luncheon.github.io/reinvented-color-wheel/)
 
 
