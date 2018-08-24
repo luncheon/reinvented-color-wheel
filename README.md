@@ -6,7 +6,7 @@ A vanilla-js HSV color picker inspired by [Farbtastic Color Picker](https://acko
 
 ## Characteristics
 
-* [HSV cylinder model](https://en.wikipedia.org/wiki/HSL_and_HSV)
+* [HSV (hue, saturation, value) cylindrical color model](https://en.wikipedia.org/wiki/HSL_and_HSV)
 * Touch-friendly
 * No need jQuery
 * Lightweight (JS + CSS ~ 6KB minified)
