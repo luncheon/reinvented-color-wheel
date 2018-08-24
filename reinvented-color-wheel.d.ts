@@ -1,33 +1,36 @@
-export interface HSL {
-    readonly h: number;
-    readonly s: number;
-    readonly l: number;
-}
-export interface ReinventedColorWheelOptions extends Partial<HSL> {
+export interface ReinventedColorWheelOptions {
     readonly parentElement: HTMLElement;
+    readonly hsv?: number[];
+    readonly hsl?: number[];
     readonly wheelDiameter?: number;
     readonly wheelThickness?: number;
     readonly handleDiameter?: number;
-    readonly onChange?: (hsl: HSL) => any;
+    readonly onChange?: (color: {
+        hsl: number[];
+        hsv: number[];
+    }) => any;
 }
 export default class ReinventedColorWheel {
     private options;
     static defaultOptions: {
-        h: number;
-        s: number;
-        l: number;
+        hsv: number[];
+        hsl: number[];
         wheelDiameter: number;
         wheelThickness: number;
         handleDiameter: number;
         onChange: () => void;
     };
-    h: number;
-    s: number;
-    l: number;
+    static hsv2hsl(hsv: number[]): number[];
+    static hsl2hsv(hsl: number[]): number[];
+    hsv: number[];
+    hsl: number[];
     wheelDiameter: number;
     wheelThickness: number;
     handleDiameter: number;
-    onChange: (hsl: HSL) => any;
+    onChange: (color: {
+        hsl: number[];
+        hsv: number[];
+    }) => any;
     containerElement: HTMLDivElement;
     hueWheelElement: HTMLCanvasElement;
     hueHandleElement: HTMLDivElement;
@@ -35,7 +38,8 @@ export default class ReinventedColorWheel {
     svSpaceElement: HTMLCanvasElement;
     svHandleElement: HTMLDivElement;
     constructor(options: ReinventedColorWheelOptions);
-    setHSL(hsl: Partial<HSL>): void;
+    setHSV(h?: number, s?: number, v?: number): void;
+    setHSL(h?: number, s?: number, l?: number): void;
     private _redrawHueWheel;
     private _redrawSvSpace;
     private _redrawHueHandle;

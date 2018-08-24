@@ -15,24 +15,19 @@ if (!pointerEventSupported && 'ontouchend' in window) {
   addEventListener(pointerEventSupported ? 'pointerup' : 'mouseup', () => dragging = undefined)
 }
 
-export interface HSL {
-  readonly h: number
-  readonly s: number
-  readonly l: number
-}
-
-export interface ReinventedColorWheelOptions extends Partial<HSL> {
+export interface ReinventedColorWheelOptions {
   readonly parentElement: HTMLElement
+  readonly hsv?: number[]
+  readonly hsl?: number[]
   readonly wheelDiameter?: number
   readonly wheelThickness?: number
   readonly handleDiameter?: number
-  readonly onChange?: (hsl: HSL) => any
+  readonly onChange?: (color: { hsl: number[], hsv: number[] }) => any
 }
 
 const defaultOptions = {
-  h: 0,
-  s: 100,
-  l: 50,
+  hsv: [0, 100, 100],
+  hsl: [0, 100, 50],
   wheelDiameter: 200,
   wheelThickness: 20,
   handleDiameter: 16,
@@ -42,9 +37,18 @@ const defaultOptions = {
 export default class ReinventedColorWheel {
   static defaultOptions = defaultOptions
 
-  h = NaN
-  s = NaN
-  l = NaN
+  static hsv2hsl(hsv: number[]) {
+    const hsl = hsv2hsl(hsv)
+    return [hsl[0], (hsl[1] * 100 + .5 | 0) / 100, (hsl[2] * 100 + .5 | 0) / 100]
+  }
+
+  static hsl2hsv(hsl: number[]) {
+    const hsv = hsl2hsv(hsl)
+    return [hsv[0], hsv[1] | 0, hsv[2] | 0]
+  }
+
+  hsv: number[]
+  hsl: number[]
   wheelDiameter   = this.options.wheelDiameter  || defaultOptions.wheelDiameter
   wheelThickness  = this.options.wheelThickness || defaultOptions.wheelThickness
   handleDiameter  = this.options.handleDiameter || defaultOptions.handleDiameter
@@ -58,12 +62,16 @@ export default class ReinventedColorWheel {
   svHandleElement       = this.containerElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
 
   constructor(private options: ReinventedColorWheelOptions) {
+    if (!options.hsv && options.hsl) {
+      this.hsv = ReinventedColorWheel.hsl2hsv(this.hsl = normalizeHsvOrDefault(options.hsl, defaultOptions.hsl))
+    } else {
+      this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv = normalizeHsvOrDefault(options.hsv, defaultOptions.hsv))
+    }
+
     const wheelDiameter  = this.wheelDiameter
     const wheelThickness = this.wheelThickness
 
-    this.containerElement.addEventListener('pointerdown', preventDefault)
-    this.containerElement.addEventListener('mousedown',   preventDefault)
-
+    this.containerElement.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', event => event.preventDefault())
     {
       const hueWheelElement = this.hueWheelElement
       const onMoveHueHandle = this._onMoveHueHandle.bind(this)
@@ -72,13 +80,16 @@ export default class ReinventedColorWheel {
       onDragMove(hueWheelElement, onMoveHueHandle)
     }
     {
+      const hueInnerCircleStyle = this.hueInnerCircleElement.style
+      hueInnerCircleStyle.width = hueInnerCircleStyle.height = `${wheelDiameter - wheelThickness - wheelThickness}px`
+    }
+    {
       const hueHandleStyle = this.hueHandleElement.style
       const svHandleStyle  = this.svHandleElement.style
       const handleDiameter = this.handleDiameter
       hueHandleStyle.width = hueHandleStyle.height = svHandleStyle.width = svHandleStyle.height = `${handleDiameter}px`
       hueHandleStyle.marginLeft = hueHandleStyle.marginTop = svHandleStyle.marginLeft = svHandleStyle.marginTop = `${-handleDiameter / 2}px`
     }
-    this.hueInnerCircleElement.style.width = this.hueInnerCircleElement.style.height = `${wheelDiameter - wheelThickness - wheelThickness}px`
     {
       const svSpaceElement = this.svSpaceElement
       const onMoveSvHandle = this._onMoveSvHandle.bind(this)
@@ -87,45 +98,52 @@ export default class ReinventedColorWheel {
       onDragMove(svSpaceElement, onMoveSvHandle)
     }
 
-    this.setHSL({
-      h: isFiniteNumber(options.h) ? options.h : defaultOptions.h,
-      s: isFiniteNumber(options.s) ? options.s : defaultOptions.s,
-      l: isFiniteNumber(options.l) ? options.l : defaultOptions.l,
-    })
+    this._redrawHueWheel()
+    this._redrawHueHandle()
+    this._redrawSvSpace()
+    this._redrawSvHandle()
   }
 
-  setHSL(hsl: Partial<HSL>) {
-    const oldH = this.h
-    const oldS = this.s
-    const oldL = this.l
-    isFiniteNumber(hsl.h) && (this.h = positiveIntModulo(hsl.h, 360))
-    isFiniteNumber(hsl.s) && (this.s = limit_0_100(hsl.s))
-    isFiniteNumber(hsl.l) && (this.l = limit_0_100(hsl.l))
-    const hueChanged = oldH !== this.h
-    const slChanged = oldS !== this.s || oldL !== this.l
+  setHSV(h?: number, s?: number, v?: number) {
+    const oldHsv = this.hsv
+    this.hsv = normalizeHsvOrDefault([h, s, v], oldHsv)
+    this.hsl[0] = this.hsv[0]
+    const hueChanged = oldHsv[0] !== this.hsv[0]
+    const svChanged = oldHsv[1] !== this.hsv[1] || oldHsv[2] !== this.hsv[2]
     if (hueChanged) {
       this._redrawHueHandle()
       this._redrawSvSpace()
     }
-    if (slChanged) {
+    if (svChanged) {
+      this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv)
       this._redrawHueWheel()
       this._redrawSvHandle()
     }
-    if (hueChanged || slChanged) {
-      this.onChange(this)
+    if (hueChanged || svChanged) {
+      this.onChange({ hsl: [...this.hsl], hsv: [...this.hsv] })
     }
   }
 
+  setHSL(h?: number, s?: number, l?: number): void
+  setHSL() {
+    this.setHSV(...ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)))
+  }
+
   private _redrawHueWheel() {
-    const center = this.wheelDiameter / 2
-    const radius = center - this.wheelThickness / 2
+    const wheelDiameter = this.wheelDiameter
+    const wheelThickness = this.wheelThickness
+    const center = wheelDiameter / 2
+    const radius = center - wheelThickness / 2
     const ctx = this.hueWheelElement.getContext('2d')!
     const TO_RAD = Math.PI / 180
+    const s = this.hsl[1]
+    const l = this.hsl[2]
+    ctx.clearRect(0, 0, wheelDiameter, wheelDiameter)
     for (let i = 0; i < 360; i++) {
       ctx.beginPath()
       ctx.arc(center, center, radius, (i - 90.6) * TO_RAD, (i - 89.4) * TO_RAD)
-      ctx.strokeStyle = `hsl(${i},${this.s}%,${this.l}%)`
-      ctx.lineWidth = this.wheelThickness
+      ctx.strokeStyle = `hsl(${i},${s}%,${l}%)`
+      ctx.lineWidth = wheelThickness
       ctx.stroke()
     }
   }
@@ -135,34 +153,33 @@ export default class ReinventedColorWheel {
     const sideLength = svSpaceElement.width
     const cellWidth = sideLength / 100
     const ctx = svSpaceElement.getContext('2d')!
-    const h = this.h
+    const h = this.hsv[0]
     ctx.clearRect(0, 0, sideLength, sideLength)
     for (let i = 0; i < 100; i++) {
       const gradient = ctx.createLinearGradient(0, 0, 0, sideLength)
-      const color0 = hsv2hsl([h, i, 100])
-      const color1 = hsv2hsl([h, i, 0])
+      const color0 = ReinventedColorWheel.hsv2hsl([h, i, 100])
+      const color1 = ReinventedColorWheel.hsv2hsl([h, i, 0])
       gradient.addColorStop(0, `hsl(${h},${color0[1]}%,${color0[2]}%)`)
       gradient.addColorStop(1, `hsl(${h},${color1[1]}%,${color1[2]}%)`)
       ctx.fillStyle = gradient
-      ctx.fillRect((i * cellWidth) | 0, 0, (cellWidth + 1) | 0, sideLength)
+      ctx.fillRect(i * cellWidth | 0, 0, cellWidth + 1 | 0, sideLength)
     }
   }
 
   private _redrawHueHandle() {
     const center = this.wheelDiameter / 2
     const wheelRadius = center - this.wheelThickness / 2
-    const angle = (this.h - 90) * Math.PI / 180
+    const angle = (this.hsv[0] - 90) * Math.PI / 180
     const hueHandleStyle = this.hueHandleElement.style
     hueHandleStyle.left = `${wheelRadius * Math.cos(angle) + center}px`
     hueHandleStyle.top = `${wheelRadius * Math.sin(angle) + center}px`
   }
 
   private _redrawSvHandle() {
-    const hsv = hsl2hsv([this.h, this.s, this.l])
     const svSpaceElement = this.svSpaceElement
     const svHandleStyle = this.svHandleElement.style
-    svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * hsv[1] / 100}px`
-    svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - hsv[2] / 100)}px`
+    svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this.hsv[1] / 100}px`
+    svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this.hsv[2] / 100)}px`
   }
 
   private _onMoveHueHandle(event: { clientX: number, clientY: number }) {
@@ -171,15 +188,38 @@ export default class ReinventedColorWheel {
     const x = event.clientX - hueWheelRect.left - center
     const y = event.clientY - hueWheelRect.top - center
     const angle = Math.atan2(y, x)
-    this.setHSL({ h: angle * 180 / Math.PI + 90 })
+    this.setHSV(angle * 180 / Math.PI + 90)
   }
 
   private _onMoveSvHandle(event: { clientX: number, clientY: number }) {
     const svSpaceRect = this.svSpaceElement.getBoundingClientRect()
     const s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width
     const v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height
-    const hsl = hsv2hsl([this.h, s, v])
-    this.setHSL({ s: hsl[1], l: hsl[2] })
+    this.setHSV(this.hsv[0], s, v)
+  }
+}
+
+function normalizeHsvOrDefault(hsvOrHsl: ArrayLike<number | undefined> | undefined, defaultHsvOrHsl: number[]) {
+  if (hsvOrHsl) {
+    return [
+      normalizeDegree(hsvOrHsl[0], defaultHsvOrHsl[0]),
+      normalizePercentage(hsvOrHsl[1], defaultHsvOrHsl[1]),
+      normalizePercentage(hsvOrHsl[2], defaultHsvOrHsl[2]),
+    ]
+  } else {
+    return defaultHsvOrHsl
+  }
+}
+
+function normalizeDegree(value: number | undefined, defaultValue: number) {
+  return isFiniteNumber(value) ? positiveIntModulo(value, 360) : defaultValue
+}
+
+function normalizePercentage(value: number | undefined, defaultValue: number) {
+  if (isFiniteNumber(value)) {
+    return value < 0 ? 0 : value > 100 ? 100 : value + .5 | 0
+  } else {
+    return defaultValue
   }
 }
 
@@ -187,17 +227,9 @@ function isFiniteNumber(n: any): n is number {
   return typeof n === 'number' && isFinite(n)
 }
 
-function limit_0_100(value: number) {
-  return value < 0 ? 0 : value > 100 ? 100 : (value + .5) | 0
-}
-
 function positiveIntModulo(value: number, divisor: number) {
-  const modulo = ((value + .5) | 0) % divisor
+  const modulo = (value + .5 | 0) % divisor
   return modulo < 0 ? modulo + divisor : modulo
-}
-
-function preventDefault(event: Event) {
-  event.preventDefault()
 }
 
 function createElementWithClass<K extends keyof HTMLElementTagNameMap>(tagName: K, className: string) {

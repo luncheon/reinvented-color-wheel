@@ -10,24 +10,25 @@
   <body>
     <div style="display: flex; flex-direction: column; align-items: center;">
       <div id="container"></div>
-      <input id="selected" spellcheck="false" style="border: none; border-radius: 4px; margin-top: 1em; padding: .5em 1em; text-align: right; font-family: monospace; color: white; text-shadow: 1px 1px 1px black;">
+      <input id="selected" spellcheck="false" size="27" style="border: none; border-radius: 4px; margin-top: 1em; padding: .5em 1em; text-align: center; font-family: monospace; color: white; text-shadow: 1px 1px 1px black;">
     </div>
     <script src="reinvented-color-wheel.min.js"></script>
     <script>
       (function () {
-        var selected = document.getElementById('selected')
-
-        new ReinventedColorWheel({
+        var color = new ReinventedColorWheel({
           parentElement: document.getElementById('container'),
           wheelDiameter: 300,
           wheelThickness: 30,
           handleDiameter: 24,
-          onChange: function (hsl) {
-            var hslString = 'hsl(' + padStart(hsl.h, 3) + ', ' + padStart(hsl.s, 3) + '%, ' + padStart(hsl.l, 3) + '%)'
+          onChange: function (color) {
+            var hsl = color.hsl
+            var hslString = 'hsl(' + padStart(hsl[0], 3) + ', ' + padStart(hsl[1].toFixed(2), 6) + '%, ' + padStart(hsl[2].toFixed(2), 6) + '%)'
+            var selected = document.getElementById('selected')
             selected.style.backgroundColor = hslString
             selected.value = hslString
           },
         })
+        color.onChange(color)
 
         function padStart(s, len) {
           s = String(s)

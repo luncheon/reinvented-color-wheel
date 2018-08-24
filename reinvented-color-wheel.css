@@ -9,6 +9,7 @@
   position: relative;
   display: inline-block;
   line-height: 0;
+  border-radius: 50%;
 }
 
 .reinvented-color-wheel--hue-wheel {
