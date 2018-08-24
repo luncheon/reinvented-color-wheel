@@ -95,7 +95,7 @@ var ReinventedColorWheel = (function () {
               ctx.lineWidth = _this.wheelThickness;
               for (var i = 0; i < 360; i++) {
                   ctx.beginPath();
-                  ctx.arc(center, center, radius, (i - 90.6) * TO_RAD, (i - 89.4) * TO_RAD);
+                  ctx.arc(center, center, radius, (i - 90.7) * TO_RAD, (i - 89.3) * TO_RAD);
                   ctx.strokeStyle = 'hsl(' + i + hslPostfix;
                   ctx.stroke();
               }
