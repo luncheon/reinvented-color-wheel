@@ -20,8 +20,8 @@ export default class ReinventedColorWheel {
         handleDiameter: number;
         onChange: () => void;
     };
-    static hsv2hsl(hsv: number[]): number[];
-    static hsl2hsv(hsl: number[]): number[];
+    static hsv2hsl: (hsv: ArrayLike<number>) => number[];
+    static hsl2hsv: (hsl: ArrayLike<number>) => number[];
     hsv: number[];
     hsl: number[];
     wheelDiameter: number;

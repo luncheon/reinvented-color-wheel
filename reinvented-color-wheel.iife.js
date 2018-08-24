@@ -174,14 +174,6 @@ var ReinventedColorWheel = (function () {
           this._redrawSvSpace();
           this._redrawSvHandle();
       }
-      ReinventedColorWheel.hsv2hsl = function (hsv) {
-          var hsl = hsv2hsl_1(hsv);
-          return [hsl[0], (hsl[1] * 100 + .5 | 0) / 100, (hsl[2] * 100 + .5 | 0) / 100];
-      };
-      ReinventedColorWheel.hsl2hsv = function (hsl) {
-          var hsv = hsl2hsv_1(hsl);
-          return [hsv[0], hsv[1] | 0, hsv[2] | 0];
-      };
       ReinventedColorWheel.prototype.setHSV = function () {
           var oldHsv = this.hsv;
           var newHsv = this.hsv = normalizeHsvOrDefault(arguments, oldHsv);
@@ -225,6 +217,8 @@ var ReinventedColorWheel = (function () {
           svHandleStyle.top = svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this.hsv[2] / 100) + "px";
       };
       ReinventedColorWheel.defaultOptions = defaultOptions;
+      ReinventedColorWheel.hsv2hsl = hsv2hsl_1;
+      ReinventedColorWheel.hsl2hsv = hsl2hsv_1;
       return ReinventedColorWheel;
   }());
   function normalizeHsvOrDefault(hsvOrHsl, defaultHsvOrHsl) {
@@ -244,7 +238,7 @@ var ReinventedColorWheel = (function () {
   }
   function normalizePercentage(value, defaultValue) {
       if (isFiniteNumber(value)) {
-          return value < 0 ? 0 : value > 100 ? 100 : value + .5 | 0;
+          return value < 0 ? 0 : value > 100 ? 100 : value;
       }
       else {
           return defaultValue;
