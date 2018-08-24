@@ -52,6 +52,7 @@ import ReinventedColorWheelOptions from "reinvented-color-wheel";
 var colorWheel = new ReinventedColorWheel({
   // appendTo is the only required property.
   appendTo: document.getElementById('my-color-picker-container'),
+
   // following properties are optional.
   hsv: [0, 100, 100], // initial hsv value
   hsl: [0, 100, 50],  // initial hsl value; if both hsl and hsv are specified, hsv is applied and hsl is ignored.
