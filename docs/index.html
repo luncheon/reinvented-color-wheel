@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reinvented Color Wheel - A vanilla-js color picker inspired by Farbtastic</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:400">
-    <link rel="stylesheet" href="reinvented-color-wheel.css">
+    <link rel="stylesheet" href="reinvented-color-wheel.min.css">
     <style>
       #selected {
         font-family: 'Roboto Mono', monospace;
@@ -27,11 +27,11 @@
       <div id="container"></div>
       <input id="selected" spellcheck="false" size="27" readonly>
     </div>
-    <script src="reinvented-color-wheel.min.js"></script>
+    <script src="reinvented-color-wheel.iife.min.js"></script>
     <script>
       (function () {
         var color = new ReinventedColorWheel({
-          parentElement: document.getElementById('container'),
+          appendTo: document.getElementById('container'),
           wheelDiameter: 300,
           wheelThickness: 30,
           handleDiameter: 24,

@@ -1,8 +1,5 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.ReinventedColorWheel = factory());
-}(this, (function () { 'use strict';
+var ReinventedColorWheel = (function () {
+  'use strict';
 
   function hsl2hsv(hsl) {
     var h = hsl[0],
@@ -69,7 +66,7 @@
           this.wheelThickness = this.options.wheelThickness || defaultOptions.wheelThickness;
           this.handleDiameter = this.options.handleDiameter || defaultOptions.handleDiameter;
           this.onChange = this.options.onChange || defaultOptions.onChange;
-          this.containerElement = this.options.parentElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel'));
+          this.containerElement = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'));
           this.hueWheelElement = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'));
           this.hueHandleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-handle'));
           this.hueInnerCircleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-inner-circle')); // to ignore events inside the wheel
@@ -248,4 +245,4 @@
 
   return ReinventedColorWheel;
 
-})));
+}());

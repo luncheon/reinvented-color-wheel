@@ -1,5 +1,5 @@
 export interface ReinventedColorWheelOptions {
-    readonly parentElement: HTMLElement;
+    readonly appendTo: HTMLElement;
     readonly hsv?: number[];
     readonly hsl?: number[];
     readonly wheelDiameter?: number;

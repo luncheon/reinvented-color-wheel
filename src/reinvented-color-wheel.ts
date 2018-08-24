@@ -16,7 +16,7 @@ if (!pointerEventSupported && 'ontouchend' in window) {
 }
 
 export interface ReinventedColorWheelOptions {
-  readonly parentElement: HTMLElement
+  readonly appendTo: HTMLElement
   readonly hsv?: number[]
   readonly hsl?: number[]
   readonly wheelDiameter?: number
@@ -54,12 +54,12 @@ export default class ReinventedColorWheel {
   handleDiameter  = this.options.handleDiameter || defaultOptions.handleDiameter
   onChange        = this.options.onChange       || defaultOptions.onChange
 
-  containerElement      = this.options.parentElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
-  hueWheelElement       = this.containerElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--hue-wheel'))
-  hueHandleElement      = this.containerElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-handle'))
-  hueInnerCircleElement = this.containerElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-inner-circle')) // to ignore events inside the wheel
-  svSpaceElement        = this.containerElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--sv-space'))
-  svHandleElement       = this.containerElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
+  containerElement      = this.options.appendTo.appendChild(createElementWithClass('div',    'reinvented-color-wheel'))
+  hueWheelElement       = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'))
+  hueHandleElement      = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--hue-handle'))
+  hueInnerCircleElement = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--hue-inner-circle')) // to ignore events inside the wheel
+  svSpaceElement        = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'))
+  svHandleElement       = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--sv-handle'))
 
   constructor(private options: ReinventedColorWheelOptions) {
     if (!options.hsv && options.hsl) {

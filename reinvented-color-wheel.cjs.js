@@ -1,5 +1,7 @@
-import hsl2hsv from 'pure-color/convert/hsl2hsv';
-import hsv2hsl from 'pure-color/convert/hsv2hsl';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var hsl2hsv_1 = require("pure-color/convert/hsl2hsv");
+var hsv2hsl_1 = require("pure-color/convert/hsv2hsl");
 var onDragStart;
 var onDragMove;
 var dragging;
@@ -74,11 +76,11 @@ var ReinventedColorWheel = /** @class */ (function () {
         this._redrawSvHandle();
     }
     ReinventedColorWheel.hsv2hsl = function (hsv) {
-        var hsl = hsv2hsl(hsv);
+        var hsl = hsv2hsl_1.default(hsv);
         return [hsl[0], (hsl[1] * 100 + .5 | 0) / 100, (hsl[2] * 100 + .5 | 0) / 100];
     };
     ReinventedColorWheel.hsl2hsv = function (hsl) {
-        var hsv = hsl2hsv(hsl);
+        var hsv = hsl2hsv_1.default(hsl);
         return [hsv[0], hsv[1] | 0, hsv[2] | 0];
     };
     ReinventedColorWheel.prototype.setHSV = function (h, s, v) {
@@ -169,7 +171,7 @@ var ReinventedColorWheel = /** @class */ (function () {
     ReinventedColorWheel.defaultOptions = defaultOptions;
     return ReinventedColorWheel;
 }());
-export default ReinventedColorWheel;
+exports.default = ReinventedColorWheel;
 function normalizeHsvOrDefault(hsvOrHsl, defaultHsvOrHsl) {
     if (hsvOrHsl) {
         return [
