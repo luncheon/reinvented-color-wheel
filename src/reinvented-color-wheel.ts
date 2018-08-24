@@ -120,7 +120,7 @@ export default class ReinventedColorWheel {
       this._redrawSvHandle()
     }
     if (hueChanged || svChanged) {
-      this.onChange({ hsl: [...this.hsl], hsv: [...this.hsv] })
+      this.onChange(this)
     }
   }
 

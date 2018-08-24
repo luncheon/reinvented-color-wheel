@@ -135,7 +135,7 @@ var ReinventedColorWheel = (function () {
               this._redrawSvHandle();
           }
           if (hueChanged || svChanged) {
-              this.onChange({ hsl: this.hsl.slice(), hsv: this.hsv.slice() });
+              this.onChange(this);
           }
       };
       ReinventedColorWheel.prototype.setHSL = function () {
