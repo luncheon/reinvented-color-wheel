@@ -23,6 +23,7 @@ var defaultOptions = {
 };
 var ReinventedColorWheel = /** @class */ (function () {
     function ReinventedColorWheel(options) {
+        var _this = this;
         this.options = options;
         this.wheelDiameter = this.options.wheelDiameter || defaultOptions.wheelDiameter;
         this.wheelThickness = this.options.wheelThickness || defaultOptions.wheelThickness;
@@ -34,6 +35,60 @@ var ReinventedColorWheel = /** @class */ (function () {
         this.hueInnerCircleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-inner-circle')); // to ignore events inside the wheel
         this.svSpaceElement = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'));
         this.svHandleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--sv-handle'));
+        this._redrawHueWheel = function () {
+            _this._redrawHueWheelRequested = false;
+            var wheelDiameter = _this.wheelDiameter;
+            var center = wheelDiameter / 2;
+            var radius = center - _this.wheelThickness / 2;
+            var TO_RAD = Math.PI / 180;
+            var hslPostfix = "," + _this.hsl[1] + "%," + _this.hsl[2] + "%)";
+            var ctx = _this.hueWheelElement.getContext('2d');
+            ctx.clearRect(0, 0, wheelDiameter, wheelDiameter);
+            ctx.lineWidth = _this.wheelThickness;
+            for (var i = 0; i < 360; i++) {
+                ctx.beginPath();
+                ctx.arc(center, center, radius, (i - 90.6) * TO_RAD, (i - 89.4) * TO_RAD);
+                ctx.strokeStyle = 'hsl(' + i + hslPostfix;
+                ctx.stroke();
+            }
+        };
+        this._redrawSvSpace = function () {
+            _this._redrawSvSpaceRequested = false;
+            var svSpaceElement = _this.svSpaceElement;
+            var sideLength = svSpaceElement.width;
+            var cellWidth = sideLength / 100;
+            var cellFillWidth = cellWidth + 1 | 0;
+            var h = _this.hsv[0];
+            var hslPrefix = "hsl(" + h + ",";
+            var hsv0 = [h, 0, 100];
+            var hsv1 = [h, 0, 0];
+            var ctx = svSpaceElement.getContext('2d');
+            ctx.clearRect(0, 0, sideLength, sideLength);
+            for (var i = 0; i < 100; i++) {
+                hsv0[1] = hsv1[1] = i;
+                var gradient = ctx.createLinearGradient(0, 0, 0, sideLength);
+                var color0 = ReinventedColorWheel.hsv2hsl(hsv0);
+                var color1 = ReinventedColorWheel.hsv2hsl(hsv1);
+                gradient.addColorStop(0, "" + hslPrefix + color0[1] + "%," + color0[2] + "%)");
+                gradient.addColorStop(1, "" + hslPrefix + color1[1] + "%," + color1[2] + "%)");
+                ctx.fillStyle = gradient;
+                ctx.fillRect(i * cellWidth | 0, 0, cellFillWidth, sideLength);
+            }
+        };
+        this._onMoveHueHandle = function (event) {
+            var hueWheelRect = _this.hueWheelElement.getBoundingClientRect();
+            var center = _this.wheelDiameter / 2;
+            var x = event.clientX - hueWheelRect.left - center;
+            var y = event.clientY - hueWheelRect.top - center;
+            var angle = Math.atan2(y, x);
+            _this.setHSV(angle * 180 / Math.PI + 90);
+        };
+        this._onMoveSvHandle = function (event) {
+            var svSpaceRect = _this.svSpaceElement.getBoundingClientRect();
+            var s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width;
+            var v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height;
+            _this.setHSV(_this.hsv[0], s, v);
+        };
         if (!options.hsv && options.hsl) {
             this.hsv = ReinventedColorWheel.hsl2hsv(this.hsl = normalizeHsvOrDefault(options.hsl, defaultOptions.hsl));
         }
@@ -45,10 +100,9 @@ var ReinventedColorWheel = /** @class */ (function () {
         this.containerElement.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) { return event.preventDefault(); });
         {
             var hueWheelElement = this.hueWheelElement;
-            var onMoveHueHandle = this._onMoveHueHandle.bind(this);
             hueWheelElement.width = hueWheelElement.height = wheelDiameter;
-            onDragStart(hueWheelElement, onMoveHueHandle);
-            onDragMove(hueWheelElement, onMoveHueHandle);
+            onDragStart(hueWheelElement, this._onMoveHueHandle);
+            onDragMove(hueWheelElement, this._onMoveHueHandle);
         }
         {
             var hueInnerCircleStyle = this.hueInnerCircleElement.style;
@@ -63,10 +117,9 @@ var ReinventedColorWheel = /** @class */ (function () {
         }
         {
             var svSpaceElement = this.svSpaceElement;
-            var onMoveSvHandle = this._onMoveSvHandle.bind(this);
             svSpaceElement.width = svSpaceElement.height = (wheelDiameter - wheelThickness - wheelThickness) * Math.sqrt(2) / 2;
-            onDragStart(svSpaceElement, onMoveSvHandle);
-            onDragMove(svSpaceElement, onMoveSvHandle);
+            onDragStart(svSpaceElement, this._onMoveSvHandle);
+            onDragMove(svSpaceElement, this._onMoveSvHandle);
         }
         this._redrawHueWheel();
         this._redrawHueHandle();
@@ -89,12 +142,18 @@ var ReinventedColorWheel = /** @class */ (function () {
         if (hueChanged) {
             this.hsl[0] = this.hsv[0];
             this._redrawHueHandle();
-            this._redrawSvSpace();
+            if (!this._redrawSvSpaceRequested) {
+                requestAnimationFrame(this._redrawSvSpace);
+                this._redrawSvSpaceRequested = true;
+            }
         }
         if (svChanged) {
             this.hsl = ReinventedColorWheel.hsv2hsl(newHsv);
-            this._redrawHueWheel();
             this._redrawSvHandle();
+            if (!this._redrawHueWheelRequested) {
+                requestAnimationFrame(this._redrawHueWheel);
+                this._redrawHueWheelRequested = true;
+            }
         }
         if (hueChanged || svChanged) {
             this.onChange(this);
@@ -102,44 +161,6 @@ var ReinventedColorWheel = /** @class */ (function () {
     };
     ReinventedColorWheel.prototype.setHSL = function () {
         this.setHSV.apply(this, ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)));
-    };
-    ReinventedColorWheel.prototype._redrawHueWheel = function () {
-        var wheelDiameter = this.wheelDiameter;
-        var center = wheelDiameter / 2;
-        var radius = center - this.wheelThickness / 2;
-        var TO_RAD = Math.PI / 180;
-        var hslPostfix = "," + this.hsl[1] + "%," + this.hsl[2] + "%)";
-        var ctx = this.hueWheelElement.getContext('2d');
-        ctx.clearRect(0, 0, wheelDiameter, wheelDiameter);
-        ctx.lineWidth = this.wheelThickness;
-        for (var i = 0; i < 360; i++) {
-            ctx.beginPath();
-            ctx.arc(center, center, radius, (i - 90.6) * TO_RAD, (i - 89.4) * TO_RAD);
-            ctx.strokeStyle = 'hsl(' + i + hslPostfix;
-            ctx.stroke();
-        }
-    };
-    ReinventedColorWheel.prototype._redrawSvSpace = function () {
-        var svSpaceElement = this.svSpaceElement;
-        var sideLength = svSpaceElement.width;
-        var cellWidth = sideLength / 100;
-        var cellFillWidth = cellWidth + 1 | 0;
-        var h = this.hsv[0];
-        var hslPrefix = "hsl(" + h + ",";
-        var hsv0 = [h, 0, 100];
-        var hsv1 = [h, 0, 0];
-        var ctx = svSpaceElement.getContext('2d');
-        ctx.clearRect(0, 0, sideLength, sideLength);
-        for (var i = 0; i < 100; i++) {
-            hsv0[1] = hsv1[1] = i;
-            var gradient = ctx.createLinearGradient(0, 0, 0, sideLength);
-            var color0 = ReinventedColorWheel.hsv2hsl(hsv0);
-            var color1 = ReinventedColorWheel.hsv2hsl(hsv1);
-            gradient.addColorStop(0, "" + hslPrefix + color0[1] + "%," + color0[2] + "%)");
-            gradient.addColorStop(1, "" + hslPrefix + color1[1] + "%," + color1[2] + "%)");
-            ctx.fillStyle = gradient;
-            ctx.fillRect(i * cellWidth | 0, 0, cellFillWidth, sideLength);
-        }
     };
     ReinventedColorWheel.prototype._redrawHueHandle = function () {
         var center = this.wheelDiameter / 2;
@@ -154,20 +175,6 @@ var ReinventedColorWheel = /** @class */ (function () {
         var svHandleStyle = this.svHandleElement.style;
         svHandleStyle.left = svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this.hsv[1] / 100 + "px";
         svHandleStyle.top = svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this.hsv[2] / 100) + "px";
-    };
-    ReinventedColorWheel.prototype._onMoveHueHandle = function (event) {
-        var hueWheelRect = this.hueWheelElement.getBoundingClientRect();
-        var center = this.wheelDiameter / 2;
-        var x = event.clientX - hueWheelRect.left - center;
-        var y = event.clientY - hueWheelRect.top - center;
-        var angle = Math.atan2(y, x);
-        this.setHSV(angle * 180 / Math.PI + 90);
-    };
-    ReinventedColorWheel.prototype._onMoveSvHandle = function (event) {
-        var svSpaceRect = this.svSpaceElement.getBoundingClientRect();
-        var s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width;
-        var v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height;
-        this.setHSV(this.hsv[0], s, v);
     };
     ReinventedColorWheel.defaultOptions = defaultOptions;
     return ReinventedColorWheel;

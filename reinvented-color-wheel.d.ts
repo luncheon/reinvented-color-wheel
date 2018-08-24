@@ -37,6 +37,8 @@ export default class ReinventedColorWheel {
     hueInnerCircleElement: HTMLDivElement;
     svSpaceElement: HTMLCanvasElement;
     svHandleElement: HTMLDivElement;
+    private _redrawHueWheelRequested;
+    private _redrawSvSpaceRequested;
     constructor(options: ReinventedColorWheelOptions);
     setHSV(h?: number, s?: number, v?: number): void;
     setHSL(h?: number, s?: number, l?: number): void;

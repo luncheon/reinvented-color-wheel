@@ -61,6 +61,9 @@ export default class ReinventedColorWheel {
   svSpaceElement        = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'))
   svHandleElement       = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--sv-handle'))
 
+  private _redrawHueWheelRequested: boolean | undefined
+  private _redrawSvSpaceRequested: boolean | undefined
+
   constructor(private options: ReinventedColorWheelOptions) {
     if (!options.hsv && options.hsl) {
       this.hsv = ReinventedColorWheel.hsl2hsv(this.hsl = normalizeHsvOrDefault(options.hsl, defaultOptions.hsl))
@@ -74,10 +77,9 @@ export default class ReinventedColorWheel {
     this.containerElement.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', event => event.preventDefault())
     {
       const hueWheelElement = this.hueWheelElement
-      const onMoveHueHandle = this._onMoveHueHandle.bind(this)
       hueWheelElement.width = hueWheelElement.height = wheelDiameter
-      onDragStart(hueWheelElement, onMoveHueHandle)
-      onDragMove(hueWheelElement, onMoveHueHandle)
+      onDragStart(hueWheelElement, this._onMoveHueHandle)
+      onDragMove(hueWheelElement, this._onMoveHueHandle)
     }
     {
       const hueInnerCircleStyle = this.hueInnerCircleElement.style
@@ -92,10 +94,9 @@ export default class ReinventedColorWheel {
     }
     {
       const svSpaceElement = this.svSpaceElement
-      const onMoveSvHandle = this._onMoveSvHandle.bind(this)
       svSpaceElement.width = svSpaceElement.height = (wheelDiameter - wheelThickness - wheelThickness) * Math.sqrt(2) / 2
-      onDragStart(svSpaceElement, onMoveSvHandle)
-      onDragMove(svSpaceElement, onMoveSvHandle)
+      onDragStart(svSpaceElement, this._onMoveSvHandle)
+      onDragMove(svSpaceElement, this._onMoveSvHandle)
     }
 
     this._redrawHueWheel()
@@ -113,12 +114,18 @@ export default class ReinventedColorWheel {
     if (hueChanged) {
       this.hsl[0] = this.hsv[0]
       this._redrawHueHandle()
-      this._redrawSvSpace()
+      if (!this._redrawSvSpaceRequested) {
+        requestAnimationFrame(this._redrawSvSpace)
+        this._redrawSvSpaceRequested = true
+      }
     }
     if (svChanged) {
       this.hsl = ReinventedColorWheel.hsv2hsl(newHsv)
-      this._redrawHueWheel()
       this._redrawSvHandle()
+      if (!this._redrawHueWheelRequested) {
+        requestAnimationFrame(this._redrawHueWheel)
+        this._redrawHueWheelRequested = true
+      }
     }
     if (hueChanged || svChanged) {
       this.onChange(this)
@@ -130,7 +137,8 @@ export default class ReinventedColorWheel {
     this.setHSV(...ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)))
   }
 
-  private _redrawHueWheel() {
+  private _redrawHueWheel = () => {
+    this._redrawHueWheelRequested = false
     const wheelDiameter = this.wheelDiameter
     const center = wheelDiameter / 2
     const radius = center - this.wheelThickness / 2
@@ -147,7 +155,8 @@ export default class ReinventedColorWheel {
     }
   }
 
-  private _redrawSvSpace() {
+  private _redrawSvSpace = () => {
+    this._redrawSvSpaceRequested = false
     const svSpaceElement = this.svSpaceElement
     const sideLength = svSpaceElement.width
     const cellWidth = sideLength / 100
@@ -186,7 +195,7 @@ export default class ReinventedColorWheel {
     svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this.hsv[2] / 100)}px`
   }
 
-  private _onMoveHueHandle(event: { clientX: number, clientY: number }) {
+  private _onMoveHueHandle = (event: { clientX: number, clientY: number }) => {
     const hueWheelRect = this.hueWheelElement.getBoundingClientRect()
     const center = this.wheelDiameter / 2
     const x = event.clientX - hueWheelRect.left - center
@@ -195,7 +204,7 @@ export default class ReinventedColorWheel {
     this.setHSV(angle * 180 / Math.PI + 90)
   }
 
-  private _onMoveSvHandle(event: { clientX: number, clientY: number }) {
+  private _onMoveSvHandle = (event: { clientX: number, clientY: number }) => {
     const svSpaceRect = this.svSpaceElement.getBoundingClientRect()
     const s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width
     const v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height
