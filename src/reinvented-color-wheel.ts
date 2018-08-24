@@ -4,11 +4,21 @@ import hsv2hsl from 'pure-color/convert/hsv2hsl'
 let onDragStart: (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
 let onDragMove:  (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
 
-let dragging: HTMLElement | undefined
+let dragging: HTMLElement | boolean | undefined
 const pointerEventSupported = 'PointerEvent' in window
 if (!pointerEventSupported && 'ontouchend' in window) {
-  onDragStart = (element, callback) => element.addEventListener('touchstart', event => { event.preventDefault(); callback(event.targetTouches[0]) })
-  onDragMove  = (element, callback) => element.addEventListener('touchmove',  event => { event.preventDefault(); callback(event.targetTouches[0]) })
+  onDragStart = (element, callback) => element.addEventListener('touchstart', event => {
+    if (dragging = event.touches.length === 1) {
+      event.preventDefault()
+      callback(event.targetTouches[0])
+    }
+  })
+  onDragMove = (element, callback) => element.addEventListener('touchmove', event => {
+    if (dragging) {
+      event.preventDefault()
+      callback(event.targetTouches[0])
+    }
+  })
 } else {
   onDragStart = (element, callback) => element.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown',  event => { dragging = element; callback(event) })
   onDragMove  = (element, callback) =>         addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove',  event => { dragging === element && callback(event) })

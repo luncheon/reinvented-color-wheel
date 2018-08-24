@@ -5,8 +5,18 @@ var onDragMove;
 var dragging;
 var pointerEventSupported = 'PointerEvent' in window;
 if (!pointerEventSupported && 'ontouchend' in window) {
-    onDragStart = function (element, callback) { return element.addEventListener('touchstart', function (event) { event.preventDefault(); callback(event.targetTouches[0]); }); };
-    onDragMove = function (element, callback) { return element.addEventListener('touchmove', function (event) { event.preventDefault(); callback(event.targetTouches[0]); }); };
+    onDragStart = function (element, callback) { return element.addEventListener('touchstart', function (event) {
+        if (dragging = event.touches.length === 1) {
+            event.preventDefault();
+            callback(event.targetTouches[0]);
+        }
+    }); };
+    onDragMove = function (element, callback) { return element.addEventListener('touchmove', function (event) {
+        if (dragging) {
+            event.preventDefault();
+            callback(event.targetTouches[0]);
+        }
+    }); };
 }
 else {
     onDragStart = function (element, callback) { return element.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) { dragging = element; callback(event); }); };

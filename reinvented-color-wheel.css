@@ -3,6 +3,10 @@
   touch-action: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .reinvented-color-wheel {
