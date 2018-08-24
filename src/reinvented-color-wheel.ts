@@ -104,18 +104,19 @@ export default class ReinventedColorWheel {
     this._redrawSvHandle()
   }
 
-  setHSV(h?: number, s?: number, v?: number) {
+  setHSV(h?: number, s?: number, v?: number): void
+  setHSV() {
     const oldHsv = this.hsv
-    this.hsv = normalizeHsvOrDefault([h, s, v], oldHsv)
-    this.hsl[0] = this.hsv[0]
-    const hueChanged = oldHsv[0] !== this.hsv[0]
-    const svChanged = oldHsv[1] !== this.hsv[1] || oldHsv[2] !== this.hsv[2]
+    const newHsv = this.hsv = normalizeHsvOrDefault(arguments, oldHsv)
+    const hueChanged = oldHsv[0] - newHsv[0]
+    const svChanged = oldHsv[1] - newHsv[1] || oldHsv[2] - newHsv[2]
     if (hueChanged) {
+      this.hsl[0] = this.hsv[0]
       this._redrawHueHandle()
       this._redrawSvSpace()
     }
     if (svChanged) {
-      this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv)
+      this.hsl = ReinventedColorWheel.hsv2hsl(newHsv)
       this._redrawHueWheel()
       this._redrawSvHandle()
     }
@@ -131,19 +132,17 @@ export default class ReinventedColorWheel {
 
   private _redrawHueWheel() {
     const wheelDiameter = this.wheelDiameter
-    const wheelThickness = this.wheelThickness
     const center = wheelDiameter / 2
-    const radius = center - wheelThickness / 2
-    const ctx = this.hueWheelElement.getContext('2d')!
+    const radius = center - this.wheelThickness / 2
     const TO_RAD = Math.PI / 180
-    const s = this.hsl[1]
-    const l = this.hsl[2]
+    const hslPostfix = `,${this.hsl[1]}%,${this.hsl[2]}%)`
+    const ctx = this.hueWheelElement.getContext('2d')!
     ctx.clearRect(0, 0, wheelDiameter, wheelDiameter)
+    ctx.lineWidth = this.wheelThickness
     for (let i = 0; i < 360; i++) {
       ctx.beginPath()
       ctx.arc(center, center, radius, (i - 90.6) * TO_RAD, (i - 89.4) * TO_RAD)
-      ctx.strokeStyle = `hsl(${i},${s}%,${l}%)`
-      ctx.lineWidth = wheelThickness
+      ctx.strokeStyle = 'hsl(' + i + hslPostfix
       ctx.stroke()
     }
   }
@@ -152,17 +151,22 @@ export default class ReinventedColorWheel {
     const svSpaceElement = this.svSpaceElement
     const sideLength = svSpaceElement.width
     const cellWidth = sideLength / 100
-    const ctx = svSpaceElement.getContext('2d')!
+    const cellFillWidth = cellWidth + 1 | 0
     const h = this.hsv[0]
+    const hslPrefix = `hsl(${h},`
+    const hsv0 = [h, 0, 100]
+    const hsv1 = [h, 0, 0]
+    const ctx = svSpaceElement.getContext('2d')!
     ctx.clearRect(0, 0, sideLength, sideLength)
     for (let i = 0; i < 100; i++) {
+      hsv0[1] = hsv1[1] = i
       const gradient = ctx.createLinearGradient(0, 0, 0, sideLength)
-      const color0 = ReinventedColorWheel.hsv2hsl([h, i, 100])
-      const color1 = ReinventedColorWheel.hsv2hsl([h, i, 0])
-      gradient.addColorStop(0, `hsl(${h},${color0[1]}%,${color0[2]}%)`)
-      gradient.addColorStop(1, `hsl(${h},${color1[1]}%,${color1[2]}%)`)
+      const color0 = ReinventedColorWheel.hsv2hsl(hsv0)
+      const color1 = ReinventedColorWheel.hsv2hsl(hsv1)
+      gradient.addColorStop(0, `${hslPrefix}${color0[1]}%,${color0[2]}%)`)
+      gradient.addColorStop(1, `${hslPrefix}${color1[1]}%,${color1[2]}%)`)
       ctx.fillStyle = gradient
-      ctx.fillRect(i * cellWidth | 0, 0, cellWidth + 1 | 0, sideLength)
+      ctx.fillRect(i * cellWidth | 0, 0, cellFillWidth, sideLength)
     }
   }
 
