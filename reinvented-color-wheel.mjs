@@ -6,13 +6,13 @@ var dragging;
 var pointerEventSupported = 'PointerEvent' in window;
 if (!pointerEventSupported && 'ontouchend' in window) {
     onDragStart = function (element, callback) { return element.addEventListener('touchstart', function (event) {
-        if (dragging = event.touches.length === 1) {
+        if (dragging = event.touches.length === 1 && element) {
             event.preventDefault();
             callback(event.targetTouches[0]);
         }
     }); };
     onDragMove = function (element, callback) { return element.addEventListener('touchmove', function (event) {
-        if (dragging) {
+        if (dragging === element) {
             event.preventDefault();
             callback(event.targetTouches[0]);
         }
@@ -42,7 +42,6 @@ var ReinventedColorWheel = /** @class */ (function () {
         this.containerElement = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'));
         this.hueWheelElement = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'));
         this.hueHandleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-handle'));
-        this.hueInnerCircleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-inner-circle')); // to ignore events inside the wheel
         this.svSpaceElement = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'));
         this.svHandleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--sv-handle'));
         this._redrawHueWheel = function () {
@@ -109,14 +108,18 @@ var ReinventedColorWheel = /** @class */ (function () {
         var wheelThickness = this.wheelThickness;
         this.containerElement.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) { return event.preventDefault(); });
         {
-            var hueWheelElement = this.hueWheelElement;
-            hueWheelElement.width = hueWheelElement.height = wheelDiameter;
-            onDragStart(hueWheelElement, this._onMoveHueHandle);
-            onDragMove(hueWheelElement, this._onMoveHueHandle);
-        }
-        {
-            var hueInnerCircleStyle = this.hueInnerCircleElement.style;
-            hueInnerCircleStyle.width = hueInnerCircleStyle.height = wheelDiameter - wheelThickness - wheelThickness + "px";
+            var hueWheelElement_1 = this.hueWheelElement;
+            hueWheelElement_1.width = hueWheelElement_1.height = wheelDiameter;
+            onDragStart(hueWheelElement_1, function (event) {
+                var rect = hueWheelElement_1.getBoundingClientRect();
+                if (hueWheelElement_1.getContext('2d').getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
+                    _this._onMoveHueHandle(event);
+                }
+                else {
+                    dragging = undefined;
+                }
+            });
+            onDragMove(hueWheelElement_1, this._onMoveHueHandle);
         }
         {
             var hueHandleStyle = this.hueHandleElement.style;

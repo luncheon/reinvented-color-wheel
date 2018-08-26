@@ -8,13 +8,13 @@ let dragging: HTMLElement | boolean | undefined
 const pointerEventSupported = 'PointerEvent' in window
 if (!pointerEventSupported && 'ontouchend' in window) {
   onDragStart = (element, callback) => element.addEventListener('touchstart', event => {
-    if (dragging = event.touches.length === 1) {
+    if (dragging = event.touches.length === 1 && element) {
       event.preventDefault()
       callback(event.targetTouches[0])
     }
   })
   onDragMove = (element, callback) => element.addEventListener('touchmove', event => {
-    if (dragging) {
+    if (dragging === element) {
       event.preventDefault()
       callback(event.targetTouches[0])
     }
@@ -59,7 +59,6 @@ export default class ReinventedColorWheel {
   containerElement      = this.options.appendTo.appendChild(createElementWithClass('div',    'reinvented-color-wheel'))
   hueWheelElement       = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'))
   hueHandleElement      = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--hue-handle'))
-  hueInnerCircleElement = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--hue-inner-circle')) // to ignore events inside the wheel
   svSpaceElement        = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'))
   svHandleElement       = this.containerElement.appendChild(createElementWithClass('div',    'reinvented-color-wheel--sv-handle'))
 
@@ -80,12 +79,15 @@ export default class ReinventedColorWheel {
     {
       const hueWheelElement = this.hueWheelElement
       hueWheelElement.width = hueWheelElement.height = wheelDiameter
-      onDragStart(hueWheelElement, this._onMoveHueHandle)
+      onDragStart(hueWheelElement, event => {
+        const rect = hueWheelElement.getBoundingClientRect()
+        if (hueWheelElement.getContext('2d')!.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
+          this._onMoveHueHandle(event)
+        } else {
+          dragging = undefined
+        }
+      })
       onDragMove(hueWheelElement, this._onMoveHueHandle)
-    }
-    {
-      const hueInnerCircleStyle = this.hueInnerCircleElement.style
-      hueInnerCircleStyle.width = hueInnerCircleStyle.height = `${wheelDiameter - wheelThickness - wheelThickness}px`
     }
     {
       const hueHandleStyle = this.hueHandleElement.style

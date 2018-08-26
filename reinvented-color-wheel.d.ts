@@ -34,7 +34,6 @@ export default class ReinventedColorWheel {
     containerElement: HTMLDivElement;
     hueWheelElement: HTMLCanvasElement;
     hueHandleElement: HTMLDivElement;
-    hueInnerCircleElement: HTMLDivElement;
     svSpaceElement: HTMLCanvasElement;
     svHandleElement: HTMLDivElement;
     private _redrawHueWheelRequested;
