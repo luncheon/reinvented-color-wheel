@@ -5,9 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reinvented Color Wheel - A vanilla-js HSV color picker inspired by Farbtastic Color Picker</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:400">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono|Crafty+Girls">
     <link rel="stylesheet" href="reinvented-color-wheel.min.css">
     <style>
+      header {
+        margin-bottom: 2em;
+      }
+      h1, a {
+        font-family: 'Crafty Girls',sans-serif;
+      }
+      h1 {
+        font-size: 2.25em;
+        text-align: center;
+        margin-bottom: 0;
+        color: #222;
+      }
+      aside {
+        text-align: right;
+      }
+      a {
+        color: hsl(239, 100.00%,  56%);
+        font-size: 1.25em;
+        text-decoration: none;
+        border-bottom: 1px solid;
+      }
+      a:hover {
+        color: hsl(239, 100.00%,  80%);
+      }
       #selected {
         font-family: 'Roboto Mono', monospace;
         font-size: inherit;
@@ -22,11 +46,15 @@
       }
     </style>
   </head>
-  <body>
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <div id="container"></div>
-      <input id="selected" spellcheck="false" size="27" readonly>
-    </div>
+  <body style="display: flex; flex-direction: column; align-items: center;">
+    <header>
+      <h1>Reinvented Color&nbsp;Wheel</h1>
+      <aside>
+        <a target="_blank" href="https://github.com/luncheon/reinvented-color-wheel">Fork me on GitHub</a>
+      </aside>
+    </header>
+    <div id="container"></div>
+    <input id="selected" spellcheck="false" size="27" readonly>
     <script src="reinvented-color-wheel.iife.min.js"></script>
     <script>
       (function () {
