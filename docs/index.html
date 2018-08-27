@@ -58,7 +58,7 @@
     <script src="reinvented-color-wheel.iife.min.js"></script>
     <script>
       (function () {
-        var color = new ReinventedColorWheel({
+        window.colorWheel = new ReinventedColorWheel({
           appendTo: document.getElementById('container'),
           wheelDiameter: 300,
           wheelThickness: 30,
@@ -71,7 +71,7 @@
             selected.value = hslString
           },
         })
-        color.onChange(color)
+        colorWheel.onChange(colorWheel)
 
         function padStart(s, len) {
           s = String(s)

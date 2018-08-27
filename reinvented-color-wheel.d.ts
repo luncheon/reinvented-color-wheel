@@ -41,6 +41,7 @@ export default class ReinventedColorWheel {
     constructor(options: ReinventedColorWheelOptions);
     setHSV(h?: number, s?: number, v?: number): void;
     setHSL(h?: number, s?: number, l?: number): void;
+    redraw(): void;
     private _redrawHueWheel;
     private _redrawSvSpace;
     private _redrawHueHandle;

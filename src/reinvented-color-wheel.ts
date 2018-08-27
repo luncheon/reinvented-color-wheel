@@ -71,42 +71,19 @@ export default class ReinventedColorWheel {
     } else {
       this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv = normalizeHsvOrDefault(options.hsv, defaultOptions.hsv))
     }
-
-    const wheelDiameter  = this.wheelDiameter
-    const wheelThickness = this.wheelThickness
-
     this.containerElement.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', event => event.preventDefault())
-    {
-      const hueWheelElement = this.hueWheelElement
-      hueWheelElement.width = hueWheelElement.height = wheelDiameter
-      onDragStart(hueWheelElement, event => {
-        const rect = hueWheelElement.getBoundingClientRect()
-        if (hueWheelElement.getContext('2d')!.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
-          this._onMoveHueHandle(event)
-        } else {
-          dragging = undefined
-        }
-      })
-      onDragMove(hueWheelElement, this._onMoveHueHandle)
-    }
-    {
-      const hueHandleStyle = this.hueHandleElement.style
-      const svHandleStyle  = this.svHandleElement.style
-      const handleDiameter = this.handleDiameter
-      hueHandleStyle.width = hueHandleStyle.height = svHandleStyle.width = svHandleStyle.height = `${handleDiameter}px`
-      hueHandleStyle.marginLeft = hueHandleStyle.marginTop = svHandleStyle.marginLeft = svHandleStyle.marginTop = `${-handleDiameter / 2}px`
-    }
-    {
-      const svSpaceElement = this.svSpaceElement
-      svSpaceElement.width = svSpaceElement.height = (wheelDiameter - wheelThickness - wheelThickness) * Math.sqrt(2) / 2
-      onDragStart(svSpaceElement, this._onMoveSvHandle)
-      onDragMove(svSpaceElement, this._onMoveSvHandle)
-    }
-
-    this._redrawHueWheel()
-    this._redrawHueHandle()
-    this._redrawSvSpace()
-    this._redrawSvHandle()
+    onDragStart(this.hueWheelElement, event => {
+      const rect = this.hueWheelElement.getBoundingClientRect()
+      if (this.hueWheelElement.getContext('2d')!.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
+        this._onMoveHueHandle(event)
+      } else {
+        dragging = undefined
+      }
+    })
+    onDragMove(this.hueWheelElement, this._onMoveHueHandle)
+    onDragStart(this.svSpaceElement, this._onMoveSvHandle)
+    onDragMove(this.svSpaceElement, this._onMoveSvHandle)
+    this.redraw()
   }
 
   setHSV(h?: number, s?: number, v?: number): void
@@ -139,6 +116,21 @@ export default class ReinventedColorWheel {
   setHSL(h?: number, s?: number, l?: number): void
   setHSL() {
     this.setHSV(...ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)))
+  }
+
+  redraw() {
+    this.hueWheelElement.width = this.hueWheelElement.height = this.wheelDiameter
+    this.svSpaceElement.width = this.svSpaceElement.height = (this.wheelDiameter - this.wheelThickness * 2) * Math.sqrt(2) / 2
+
+    const hueHandleStyle = this.hueHandleElement.style
+    const svHandleStyle  = this.svHandleElement.style
+    hueHandleStyle.width = hueHandleStyle.height = svHandleStyle.width = svHandleStyle.height = `${this.handleDiameter}px`
+    hueHandleStyle.marginLeft = hueHandleStyle.marginTop = svHandleStyle.marginLeft = svHandleStyle.marginTop = `${-this.handleDiameter / 2}px`
+
+    this._redrawHueWheel()
+    this._redrawHueHandle()
+    this._redrawSvSpace()
+    this._redrawSvHandle()
   }
 
   private _redrawHueWheel = () => {
@@ -216,28 +208,20 @@ export default class ReinventedColorWheel {
   }
 }
 
-function normalizeHsvOrDefault(hsvOrHsl: ArrayLike<number | undefined> | undefined, defaultHsvOrHsl: number[]) {
-  if (hsvOrHsl) {
+function normalizeHsvOrDefault(hsv: ArrayLike<number | undefined> | undefined, defaultHsvOrHsl: number[]) {
+  if (hsv) {
     return [
-      normalizeDegree(hsvOrHsl[0], defaultHsvOrHsl[0]),
-      normalizePercentage(hsvOrHsl[1], defaultHsvOrHsl[1]),
-      normalizePercentage(hsvOrHsl[2], defaultHsvOrHsl[2]),
+      isFiniteNumber(hsv[0]) ? positiveIntModulo(hsv[0]!, 360) : defaultHsvOrHsl[0],
+      isFiniteNumber(hsv[1]) ? normalizePercentage(hsv[1]!) : defaultHsvOrHsl[1],
+      isFiniteNumber(hsv[2]) ? normalizePercentage(hsv[2]!) : defaultHsvOrHsl[2],
     ]
   } else {
     return defaultHsvOrHsl
   }
 }
 
-function normalizeDegree(value: number | undefined, defaultValue: number) {
-  return isFiniteNumber(value) ? positiveIntModulo(value, 360) : defaultValue
-}
-
-function normalizePercentage(value: number | undefined, defaultValue: number) {
-  if (isFiniteNumber(value)) {
-    return value < 0 ? 0 : value > 100 ? 100 : value
-  } else {
-    return defaultValue
-  }
+function normalizePercentage(value: number) {
+  return value < 0 ? 0 : value > 100 ? 100 : value
 }
 
 function isFiniteNumber(n: any): n is number {
