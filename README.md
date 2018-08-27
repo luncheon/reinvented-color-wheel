@@ -1,12 +1,14 @@
 # Reinvented Color Wheel
 
-A vanilla-js HSV color picker inspired by [Farbtastic Color Picker](https://acko.net/blog/farbtastic-jquery-color-picker-plug-in/).  
+A vanilla-js HSV color picker inspired by [Farbtastic Color Picker](https://acko.net/blog/farbtastic-jquery-color-picker-plug-in/).
+
 [Demo](https://luncheon.github.io/reinvented-color-wheel/)
 
 
 ## Characteristics
 
-* [HSV (hue, saturation, value) cylindrical color model](https://en.wikipedia.org/wiki/HSL_and_HSV)
+* HSV (hue, saturation, value) cylindrical color model (unlike Farbtastic that takes HSL)
+  * c.f. [HSL and HSV - Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV)
 * Touch-friendly
 * No need jQuery
 * Lightweight (JS + CSS ~ 6KB minified)
