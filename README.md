@@ -1,5 +1,7 @@
 # Reinvented Color Wheel
 
+![image](https://luncheon.github.io/reinvented-color-wheel/image.png)
+
 A vanilla-js HSV color picker inspired by [Farbtastic Color Picker](https://acko.net/blog/farbtastic-jquery-color-picker-plug-in/).
 
 [Demo](https://luncheon.github.io/reinvented-color-wheel/)
@@ -44,7 +46,7 @@ import ReinventedColorWheelOptions from "reinvented-color-wheel";
 ## Download
 
 <a target="_blank" download="reinvented-color-wheel.min.css" href="https://luncheon.github.io/reinvented-color-wheel/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
-<a target="_blank" download="reinvented-color-wheel.iife.min.js" href="https://luncheon.github.io/reinvented-color-wheel/reinvented-color-wheel.iife.min.js">reinvented-color-wheel.iife.min.js</a>
+<a target="_blank" download="reinvented-color-wheel.min.js" href="https://luncheon.github.io/reinvented-color-wheel/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
 
 
 ## Usage
