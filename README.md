@@ -61,7 +61,7 @@ or for [modern browsers](https://caniuse.com/#feat=es6-module):
 // create a new color picker
 var colorWheel = new ReinventedColorWheel({
   // appendTo is the only required property.
-  appendTo: document.getElementById('my-color-picker-container'),
+  appendTo: document.getElementById("my-color-picker-container"),
 
   // followings are optional properties and their default values.
   hsv: [0, 100, 100], // initial hsv value
@@ -71,8 +71,8 @@ var colorWheel = new ReinventedColorWheel({
   handleDiameter: 16,
   wheelReflectsSaturation: true,
   onChange: function (color) {
-    // console.log('hsl:', color.hsl[0], color.hsl[1], color.hsl[2]);
-    // console.log('hsv:', color.hsv[0], color.hsv[1], color.hsv[2]);
+    // console.log("hsl:", color.hsl[0], color.hsl[1], color.hsl[2]);
+    // console.log("hsv:", color.hsv[0], color.hsv[1], color.hsv[2]);
   },
 });
 
@@ -83,10 +83,19 @@ colorWheel.setHSL(120, 100, 50);
 colorWheel.setHSV(240, 100, 100);
 
 // get color in HSL color space
-console.log('hsl:', colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
+console.log("hsl:", colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
 
 // get color in HSV color space
-console.log('hsv:', colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
+console.log("hsv:", colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
+```
+
+when you need another color format such as RGB or HEX, please check the color conversion module such as [pure-color](https://www.npmjs.com/package/pure-color).
+
+```javascript
+import hsl2rgb from "pure-color/convert/hsl2rgb";
+import rgb2hex from "pure-color/convert/rgb2hex";
+
+console.log("hex:", rgb2hex(hsl2rgb(colorWheel.hsl)));
 ```
 
 
