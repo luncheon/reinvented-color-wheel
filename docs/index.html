@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reinvented Color Wheel - A vanilla-js HSV color picker inspired by Farbtastic Color Picker</title>
+    <meta name="description" content="A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker.">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono|Crafty+Girls">
@@ -61,7 +62,7 @@
       </aside>
     </header>
     <div id="container"></div>
-    <input id="selected" spellcheck="false" size="27" readonly>
+    <input id="selected" spellcheck="false" size="27" aria-label="selected color" readonly>
     <script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.0"></script>
     <script>
       (function () {
