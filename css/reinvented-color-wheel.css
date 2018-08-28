@@ -1,4 +1,8 @@
-.reinvented-color-wheel, .reinvented-color-wheel * {
+.reinvented-color-wheel,
+.reinvented-color-wheel--hue-wheel,
+.reinvented-color-wheel--hue-handle,
+.reinvented-color-wheel--sv-space,
+.reinvented-color-wheel--sv-handle {
   touch-action: manipulation;
   touch-action: none;
   -webkit-touch-callout: none;
@@ -20,6 +24,15 @@
   border-radius: 50%;
 }
 
+.reinvented-color-wheel--sv-space {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
 .reinvented-color-wheel--hue-handle,
 .reinvented-color-wheel--sv-handle {
   position: absolute;
@@ -28,13 +41,4 @@
   border-radius: 50%;
   border: 2px solid white;
   box-shadow: 0 0 0 1px black inset;
-}
-
-.reinvented-color-wheel--sv-space {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
 }
