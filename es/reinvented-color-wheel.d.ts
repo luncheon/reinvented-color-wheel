@@ -31,7 +31,7 @@ export default class ReinventedColorWheel {
         hsl: number[];
         hsv: number[];
     }) => any;
-    containerElement: HTMLDivElement;
+    rootElement: HTMLDivElement;
     hueWheelElement: HTMLCanvasElement;
     hueHandleElement: HTMLDivElement;
     svSpaceElement: HTMLCanvasElement;

@@ -19,9 +19,18 @@ if (!pointerEventSupported && 'ontouchend' in window) {
     }); };
 }
 else {
-    onDragStart = function (element, callback) { return element.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) { dragging = element; callback(event); }); };
-    onDragMove = function (element, callback) { return addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove', function (event) { dragging === element && callback(event); }); };
-    addEventListener(pointerEventSupported ? 'pointerup' : 'mouseup', function () { return dragging = undefined; });
+    onDragStart = function (element, callback) { return element.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) {
+        if (event.button === 0) {
+            dragging = element;
+            callback(event);
+        }
+    }); };
+    onDragMove = function (element, callback) { return addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove', function (event) {
+        if (dragging === element) {
+            callback(event);
+        }
+    }); };
+    addEventListener(pointerEventSupported ? 'pointerup' : 'mouseup', function () { dragging = undefined; });
 }
 var defaultOptions = {
     hsv: [0, 100, 100],
@@ -39,11 +48,11 @@ var ReinventedColorWheel = /** @class */ (function () {
         this.wheelThickness = this.options.wheelThickness || defaultOptions.wheelThickness;
         this.handleDiameter = this.options.handleDiameter || defaultOptions.handleDiameter;
         this.onChange = this.options.onChange || defaultOptions.onChange;
-        this.containerElement = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'));
-        this.hueWheelElement = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'));
-        this.hueHandleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-handle'));
-        this.svSpaceElement = this.containerElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'));
-        this.svHandleElement = this.containerElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--sv-handle'));
+        this.rootElement = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'));
+        this.hueWheelElement = this.rootElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'));
+        this.hueHandleElement = this.rootElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-handle'));
+        this.svSpaceElement = this.rootElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--sv-space'));
+        this.svHandleElement = this.rootElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--sv-handle'));
         this._redrawHueWheel = function () {
             _this._redrawHueWheelRequested = false;
             var wheelDiameter = _this.wheelDiameter;
@@ -104,7 +113,6 @@ var ReinventedColorWheel = /** @class */ (function () {
         else {
             this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv = normalizeHsvOrDefault(options.hsv, defaultOptions.hsv));
         }
-        this.containerElement.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', function (event) { return event.preventDefault(); });
         onDragStart(this.hueWheelElement, function (event) {
             var rect = _this.hueWheelElement.getBoundingClientRect();
             if (_this.hueWheelElement.getContext('2d').getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
