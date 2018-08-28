@@ -76,16 +76,18 @@ var ReinventedColorWheel = (function () {
       wheelDiameter: 200,
       wheelThickness: 20,
       handleDiameter: 16,
-      onChange: function () { },
+      wheelReflectsSaturation: true,
+      onChange: (function () { }),
   };
   var ReinventedColorWheel = /** @class */ (function () {
       function ReinventedColorWheel(options) {
           var _this = this;
           this.options = options;
-          this.wheelDiameter = this.options.wheelDiameter || defaultOptions.wheelDiameter;
-          this.wheelThickness = this.options.wheelThickness || defaultOptions.wheelThickness;
-          this.handleDiameter = this.options.handleDiameter || defaultOptions.handleDiameter;
-          this.onChange = this.options.onChange || defaultOptions.onChange;
+          this.wheelDiameter = this._option('wheelDiameter');
+          this.wheelThickness = this._option('wheelThickness');
+          this.handleDiameter = this._option('handleDiameter');
+          this.onChange = this._option('onChange');
+          this.wheelReflectsSaturation = this._option('wheelReflectsSaturation');
           this.rootElement = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'));
           this.hueWheelElement = this.rootElement.appendChild(createElementWithClass('canvas', 'reinvented-color-wheel--hue-wheel'));
           this.hueHandleElement = this.rootElement.appendChild(createElementWithClass('div', 'reinvented-color-wheel--hue-handle'));
@@ -97,7 +99,7 @@ var ReinventedColorWheel = (function () {
               var center = wheelDiameter / 2;
               var radius = center - _this.wheelThickness / 2;
               var TO_RAD = Math.PI / 180;
-              var hslPostfix = "," + _this.hsl[1] + "%," + _this.hsl[2] + "%)";
+              var hslPostfix = _this.wheelReflectsSaturation ? "," + _this.hsl[1] + "%," + _this.hsl[2] + "%)" : ',100%,50%)';
               var ctx = _this.hueWheelElement.getContext('2d');
               ctx.clearRect(0, 0, wheelDiameter, wheelDiameter);
               ctx.lineWidth = _this.wheelThickness;
@@ -181,7 +183,7 @@ var ReinventedColorWheel = (function () {
           if (svChanged) {
               this.hsl = ReinventedColorWheel.hsv2hsl(newHsv);
               this._redrawSvHandle();
-              if (!this._redrawHueWheelRequested) {
+              if (this.wheelReflectsSaturation && !this._redrawHueWheelRequested) {
                   requestAnimationFrame(this._redrawHueWheel);
                   this._redrawHueWheelRequested = true;
               }
@@ -218,6 +220,10 @@ var ReinventedColorWheel = (function () {
           var svHandleStyle = this.svHandleElement.style;
           svHandleStyle.left = svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this.hsv[1] / 100 + "px";
           svHandleStyle.top = svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this.hsv[2] / 100) + "px";
+      };
+      ReinventedColorWheel.prototype._option = function (property) {
+          var option = this.options[property];
+          return option !== undefined ? option : defaultOptions[property];
       };
       ReinventedColorWheel.defaultOptions = defaultOptions;
       ReinventedColorWheel.hsv2hsl = hsv2hsl_1;

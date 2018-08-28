@@ -71,6 +71,7 @@
           wheelDiameter: 300,
           wheelThickness: 30,
           handleDiameter: 24,
+          wheelReflectsSaturation: true,
           onChange: function (color) {
             var hsl = color.hsl
             var hslString = 'hsl(' + padStart(hsl[0], 3) + ', ' + padStart(hsl[1].toFixed(2), 6) + '%, ' + padStart(hsl[2].toFixed(2), 6) + '%)'

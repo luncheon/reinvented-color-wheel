@@ -5,6 +5,7 @@ export interface ReinventedColorWheelOptions {
     readonly wheelDiameter?: number;
     readonly wheelThickness?: number;
     readonly handleDiameter?: number;
+    readonly wheelReflectsSaturation?: boolean;
     readonly onChange?: (color: {
         hsl: number[];
         hsv: number[];
@@ -18,7 +19,11 @@ export default class ReinventedColorWheel {
         wheelDiameter: number;
         wheelThickness: number;
         handleDiameter: number;
-        onChange: () => void;
+        wheelReflectsSaturation: boolean;
+        onChange: (color: {
+            hsl: number[];
+            hsv: number[];
+        }) => any;
     };
     static hsv2hsl: (hsv: ArrayLike<number>) => number[];
     static hsl2hsv: (hsl: ArrayLike<number>) => number[];
@@ -31,6 +36,7 @@ export default class ReinventedColorWheel {
         hsl: number[];
         hsv: number[];
     }) => any;
+    wheelReflectsSaturation: boolean;
     rootElement: HTMLDivElement;
     hueWheelElement: HTMLCanvasElement;
     hueHandleElement: HTMLDivElement;
@@ -48,4 +54,5 @@ export default class ReinventedColorWheel {
     private _redrawSvHandle;
     private _onMoveHueHandle;
     private _onMoveSvHandle;
+    private _option;
 }

@@ -41,6 +41,7 @@ export interface ReinventedColorWheelOptions {
   readonly wheelDiameter?: number
   readonly wheelThickness?: number
   readonly handleDiameter?: number
+  readonly wheelReflectsSaturation?: boolean
   readonly onChange?: (color: { hsl: number[], hsv: number[] }) => any
 }
 
@@ -50,7 +51,8 @@ const defaultOptions = {
   wheelDiameter: 200,
   wheelThickness: 20,
   handleDiameter: 16,
-  onChange: () => {},
+  wheelReflectsSaturation: true,
+  onChange: (() => {}) as NonNullable<ReinventedColorWheelOptions['onChange']>,
 }
 
 export default class ReinventedColorWheel {
@@ -60,10 +62,11 @@ export default class ReinventedColorWheel {
 
   hsv: number[]
   hsl: number[]
-  wheelDiameter  = this.options.wheelDiameter  || defaultOptions.wheelDiameter
-  wheelThickness = this.options.wheelThickness || defaultOptions.wheelThickness
-  handleDiameter = this.options.handleDiameter || defaultOptions.handleDiameter
-  onChange       = this.options.onChange       || defaultOptions.onChange
+  wheelDiameter           = this._option('wheelDiameter')
+  wheelThickness          = this._option('wheelThickness')
+  handleDiameter          = this._option('handleDiameter')
+  onChange                = this._option('onChange')
+  wheelReflectsSaturation = this._option('wheelReflectsSaturation')
 
   rootElement      = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
   hueWheelElement  = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--hue-wheel'))
@@ -111,7 +114,7 @@ export default class ReinventedColorWheel {
     if (svChanged) {
       this.hsl = ReinventedColorWheel.hsv2hsl(newHsv)
       this._redrawSvHandle()
-      if (!this._redrawHueWheelRequested) {
+      if (this.wheelReflectsSaturation && !this._redrawHueWheelRequested) {
         requestAnimationFrame(this._redrawHueWheel)
         this._redrawHueWheelRequested = true
       }
@@ -147,7 +150,7 @@ export default class ReinventedColorWheel {
     const center = wheelDiameter / 2
     const radius = center - this.wheelThickness / 2
     const TO_RAD = Math.PI / 180
-    const hslPostfix = `,${this.hsl[1]}%,${this.hsl[2]}%)`
+    const hslPostfix = this.wheelReflectsSaturation ? `,${this.hsl[1]}%,${this.hsl[2]}%)` : ',100%,50%)'
     const ctx = this.hueWheelElement.getContext('2d')!
     ctx.clearRect(0, 0, wheelDiameter, wheelDiameter)
     ctx.lineWidth = this.wheelThickness
@@ -213,6 +216,11 @@ export default class ReinventedColorWheel {
     const s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width
     const v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height
     this.setHSV(this.hsv[0], s, v)
+  }
+
+  private _option<P extends keyof typeof defaultOptions>(property: P): typeof defaultOptions[P] {
+    const option = this.options[property]
+    return option !== undefined ? option! : defaultOptions[property]
   }
 }
 

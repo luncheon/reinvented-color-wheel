@@ -63,15 +63,16 @@ var colorWheel = new ReinventedColorWheel({
   // appendTo is the only required property.
   appendTo: document.getElementById('my-color-picker-container'),
 
-  // following properties are optional.
+  // followings are optional properties and their default values.
   hsv: [0, 100, 100], // initial hsv value
   hsl: [0, 100, 50],  // initial hsl value; if both hsl and hsv are specified, hsv is applied and hsl is ignored.
   wheelDiameter: 200,
   wheelThickness: 20,
   handleDiameter: 16,
+  wheelReflectsSaturation: true,
   onChange: function (color) {
-    console.log('hsl:', color.hsl[0], color.hsl[1], color.hsl[2]);
-    console.log('hsv:', color.hsv[0], color.hsv[1], color.hsv[2]);
+    // console.log('hsl:', color.hsl[0], color.hsl[1], color.hsl[2]);
+    // console.log('hsv:', color.hsv[0], color.hsv[1], color.hsv[2]);
   },
 });
 
