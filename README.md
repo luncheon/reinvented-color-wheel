@@ -17,7 +17,7 @@ A vanilla-js HSV color picker inspired by [Farbtastic Color Picker](https://acko
 
 
 ## Installation
-
+<!-- 
 ### via [npm](https://www.npmjs.com/package/reinvented-color-wheel) (with a module bundler)
 
 ```bash
@@ -47,6 +47,9 @@ or for [modern browsers](https://caniuse.com/#feat=es6-module):
 ```
 
 ### Download directly
+ -->
+
+### Download
 
 <a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.0/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
 <a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.0/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
