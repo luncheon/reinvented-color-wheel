@@ -11,8 +11,14 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono|Crafty+Girls">
     <link rel="stylesheet" href="reinvented-color-wheel.min.css">
     <style>
+      body {
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
       header {
-        margin-bottom: 2em;
+        margin-bottom: 1.5em;
       }
       h1, a {
         font-family: 'Crafty Girls',sans-serif;
@@ -22,7 +28,6 @@
         font-size: 2.25em;
         text-align: center;
         margin: .5em 0 0 0;
-        color: #222;
         line-height: 1.2;
       }
       aside {
@@ -34,17 +39,36 @@
         text-decoration: none;
         border-bottom: 1px solid;
       }
-      a:hover {
-        color: hsl(239, 100.00%,  80%);
+      @media (hover: hover) {
+        a:hover {
+          color: hsl(239, 100.00%,  80%);
+        }
       }
-      #selected {
+      label, input {
         font-family: 'Roboto Mono', monospace;
         font-size: inherit;
+        margin: 0;
+        line-height: 1.4;
+      }
+      label {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      @media (hover: hover) {
+        label:hover {
+          text-decoration: underline;
+        }
+      }
+      label > input {
+        margin-right: .5em;
+      }
+      #selected {
         outline: none;
         border: none;
         border-radius: 4px;
         margin-top: 1em;
-        padding: .5em 1em;
+        padding: .35em .5em;
         text-align: center;
         color: white;
         text-shadow: 1px 1px 1px black;
@@ -54,7 +78,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-64398169-1"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','UA-64398169-1');</script>
   </head>
-  <body style="display: flex; flex-direction: column; align-items: center;">
+  <body>
     <header>
       <h1>Reinvented Color&nbsp;Wheel</h1>
       <aside>
@@ -63,6 +87,10 @@
     </header>
     <div id="container"></div>
     <input id="selected" spellcheck="false" size="27" aria-label="selected color" readonly>
+    <label style="margin: .5em 0;">
+      <input type="checkbox" checked onchange="colorWheel.wheelReflectsSaturation = this.checked; colorWheel.redraw()">
+      <span>wheel reflects saturation</span>
+    </label>
     <script src="reinvented-color-wheel.min.js"></script>
     <script>
       (function () {
@@ -78,6 +106,7 @@
             var selected = document.getElementById('selected')
             selected.style.backgroundColor = hslString
             selected.value = hslString
+            document.getElementsByTagName('h1')[0].style.color = hslString
           },
         })
         colorWheel.onChange(colorWheel)
