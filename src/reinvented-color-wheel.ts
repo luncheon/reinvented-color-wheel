@@ -56,6 +56,7 @@ const defaultOptions = {
 }
 
 export default class ReinventedColorWheel {
+  static default = ReinventedColorWheel
   static defaultOptions = defaultOptions
   static hsv2hsl = hsv2hsl
   static hsl2hsv = hsl2hsv

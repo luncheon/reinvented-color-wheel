@@ -187,6 +187,7 @@ var ReinventedColorWheel = /** @class */ (function () {
         var option = this.options[property];
         return option !== undefined ? option : defaultOptions[property];
     };
+    ReinventedColorWheel.default = ReinventedColorWheel;
     ReinventedColorWheel.defaultOptions = defaultOptions;
     ReinventedColorWheel.hsv2hsl = hsv2hsl;
     ReinventedColorWheel.hsl2hsv = hsl2hsv;

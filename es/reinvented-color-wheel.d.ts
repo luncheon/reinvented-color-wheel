@@ -13,6 +13,7 @@ export interface ReinventedColorWheelOptions {
 }
 export default class ReinventedColorWheel {
     private options;
+    static default: typeof ReinventedColorWheel;
     static defaultOptions: {
         hsv: number[];
         hsl: number[];

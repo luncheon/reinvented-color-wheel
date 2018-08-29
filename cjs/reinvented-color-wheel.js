@@ -1,7 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var hsl2hsv_1 = require("pure-color/convert/hsl2hsv");
-var hsv2hsl_1 = require("pure-color/convert/hsv2hsl");
+'use strict';
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var hsl2hsv = _interopDefault(require('../node_modules/pure-color/convert/hsl2hsv.js'));
+var hsv2hsl = _interopDefault(require('../node_modules/pure-color/convert/hsv2hsl.js'));
+
 var onDragStart;
 var onDragMove;
 var dragging;
@@ -189,12 +192,12 @@ var ReinventedColorWheel = /** @class */ (function () {
         var option = this.options[property];
         return option !== undefined ? option : defaultOptions[property];
     };
+    ReinventedColorWheel.default = ReinventedColorWheel;
     ReinventedColorWheel.defaultOptions = defaultOptions;
-    ReinventedColorWheel.hsv2hsl = hsv2hsl_1.default;
-    ReinventedColorWheel.hsl2hsv = hsl2hsv_1.default;
+    ReinventedColorWheel.hsv2hsl = hsv2hsl;
+    ReinventedColorWheel.hsl2hsv = hsl2hsv;
     return ReinventedColorWheel;
 }());
-exports.default = ReinventedColorWheel;
 function normalizeHsvOrDefault(hsv, defaultHsvOrHsl) {
     if (hsv) {
         return [
@@ -222,3 +225,5 @@ function createElementWithClass(tagName, className) {
     element.className = className;
     return element;
 }
+
+module.exports = ReinventedColorWheel;
