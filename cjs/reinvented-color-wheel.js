@@ -2,8 +2,8 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var hsl2hsv = _interopDefault(require('../node_modules/pure-color/convert/hsl2hsv.js'));
-var hsv2hsl = _interopDefault(require('../node_modules/pure-color/convert/hsv2hsl.js'));
+var hsl2hsv = _interopDefault(require('pure-color/convert/hsl2hsv'));
+var hsv2hsl = _interopDefault(require('pure-color/convert/hsv2hsl'));
 
 var onDragStart;
 var onDragMove;

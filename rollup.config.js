@@ -20,7 +20,7 @@ const config = (format, extension, compress, external) => ({
 export default [
   config('es', 'bundle.js', false),
   config('es', 'bundle.min.js', true),
-  config('cjs', 'js', false, id => /[/\\]node_modules[/\\]/.test(id)),
+  config('cjs', 'js', false, id => id.startsWith('pure-color/')),
   config('iife', 'js', false),
   config('iife', 'min.js', true),
 ]
