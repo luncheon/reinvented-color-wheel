@@ -57,7 +57,7 @@ or for [modern browsers](https://caniuse.com/#feat=es6-module):
 ```javascript
 // create a new color picker
 var colorWheel = new ReinventedColorWheel({
-  // appendTo is the only required property.
+  // appendTo is the only required property. specify the parent element of the color wheel.
   appendTo: document.getElementById("my-color-picker-container"),
 
   // followings are optional properties and their default values.
@@ -68,6 +68,7 @@ var colorWheel = new ReinventedColorWheel({
   handleDiameter: 16,
   wheelReflectsSaturation: true,
   onChange: function (color) {
+    // the received argument `color` is the ReinventedColorWheel instance itself.
     // console.log("hsl:", color.hsl[0], color.hsl[1], color.hsl[2]);
     // console.log("hsv:", color.hsv[0], color.hsv[1], color.hsv[2]);
   },
