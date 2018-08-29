@@ -1,7 +1,7 @@
 {
   "name": "reinvented-color-wheel",
-  "version": "0.1.0",
-  "description": "A vanilla-js HSV color picker inspired by Farbtastic Color Picker.",
+  "version": "0.1.1",
+  "description": "A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker.",
   "main": "cjs/reinvented-color-wheel.js",
   "module": "es/reinvented-color-wheel.js",
   "types": "es/reinvented-color-wheel.d.ts",
