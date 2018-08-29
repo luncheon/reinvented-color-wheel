@@ -16,12 +16,11 @@
   ],
   "scripts": {
     "clean": "rimraf css/ es/ cjs/ iife/",
-    "build": "npm run clean && npm run build:css && npm run build:css:min && npm run build:es && npm run build:bundle && npm run build:docs",
+    "build": "npm run clean && npm run build:css && npm run build:css:min && npm run build:es && npm run build:bundle",
     "build:css": "cpx src/reinvented-color-wheel.css css/",
     "build:css:min": "postcss css/reinvented-color-wheel.css -o css/reinvented-color-wheel.min.css -u cssnano --no-map",
     "build:es": "tsc -p . --outDir es/",
-    "build:bundle": "rollup -c",
-    "build:docs": "cpx css/reinvented-color-wheel.min.css docs/ && cpx iife/reinvented-color-wheel.min.js docs/"
+    "build:bundle": "rollup -c"
   },
   "keywords": [
     "color",
