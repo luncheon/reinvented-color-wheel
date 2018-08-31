@@ -71,14 +71,19 @@ export default class ReinventedColorWheel {
 
   rootElement      = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
   hueWheelElement  = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--hue-wheel'))
+  hueWheelContext  = this.hueWheelElement.getContext('2d')!
   hueHandleElement = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-handle'))
   svSpaceElement   = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--sv-space'))
+  svSpaceContext   = this.svSpaceElement.getContext('2d', { alpha: false })!
   svHandleElement  = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
 
   private _redrawHueWheelRequested: boolean | undefined
   private _redrawSvSpaceRequested: boolean | undefined
 
   constructor(private options: ReinventedColorWheelOptions) {
+    this.hueWheelContext.imageSmoothingEnabled = false
+    this.svSpaceContext.imageSmoothingEnabled = false
+
     if (!options.hsv && options.hsl) {
       this.hsv = ReinventedColorWheel.hsl2hsv(this.hsl = normalizeHsvOrDefault(options.hsl, defaultOptions.hsl))
     } else {
@@ -86,7 +91,7 @@ export default class ReinventedColorWheel {
     }
     onDragStart(this.hueWheelElement, event => {
       const rect = this.hueWheelElement.getBoundingClientRect()
-      if (this.hueWheelElement.getContext('2d')!.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
+      if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
         this._onMoveHueHandle(event)
       } else {
         dragging = undefined
@@ -152,7 +157,7 @@ export default class ReinventedColorWheel {
     const radius = center - this.wheelThickness / 2
     const TO_RAD = Math.PI / 180
     const hslPostfix = this.wheelReflectsSaturation ? `,${this.hsl[1]}%,${this.hsl[2]}%)` : ',100%,50%)'
-    const ctx = this.hueWheelElement.getContext('2d')!
+    const ctx = this.hueWheelContext
     ctx.clearRect(0, 0, wheelDiameter, wheelDiameter)
     ctx.lineWidth = this.wheelThickness
     for (let i = 0; i < 360; i++) {
@@ -165,16 +170,14 @@ export default class ReinventedColorWheel {
 
   private _redrawSvSpace = () => {
     this._redrawSvSpaceRequested = false
-    const svSpaceElement = this.svSpaceElement
-    const sideLength = svSpaceElement.width
+    const sideLength = this.svSpaceElement.width
     const cellWidth = sideLength / 100
     const cellFillWidth = cellWidth + 1 | 0
     const h = this.hsv[0]
     const hslPrefix = `hsl(${h},`
     const hsv0 = [h, 0, 100]
     const hsv1 = [h, 0, 0]
-    const ctx = svSpaceElement.getContext('2d')!
-    ctx.clearRect(0, 0, sideLength, sideLength)
+    const ctx = this.svSpaceContext
     for (let i = 0; i < 100; i++) {
       hsv0[1] = hsv1[1] = i
       const gradient = ctx.createLinearGradient(0, 0, 0, sideLength)
