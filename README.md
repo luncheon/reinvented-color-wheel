@@ -32,24 +32,24 @@ import ReinventedColorWheel from "reinvented-color-wheel";
 ### via CDN ([jsDelivr](https://www.jsdelivr.com/package/npm/reinvented-color-wheel))
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.5/css/reinvented-color-wheel.min.css">
-<script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.5"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.6/css/reinvented-color-wheel.min.css">
+<script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.6"></script>
 <script>/* `window.ReinventedColorWheel` object is available */</script>
 ```
 
 or for [modern browsers](https://caniuse.com/#feat=es6-module):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.5/css/reinvented-color-wheel.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.6/css/reinvented-color-wheel.min.css">
 <script type="module">
-  import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.5/es/reinvented-color-wheel.bundle.min.js";
+  import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.6/es/reinvented-color-wheel.bundle.min.js";
 </script>
 ```
 
 ### Download directly
 
-<a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.5/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
-<a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.5/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
+<a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.6/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
+<a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.1.6/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
 
 
 ## Usage
