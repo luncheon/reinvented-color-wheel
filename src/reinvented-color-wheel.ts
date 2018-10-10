@@ -74,11 +74,10 @@ export default class ReinventedColorWheel {
   hueWheelContext  = this.hueWheelElement.getContext('2d')!
   hueHandleElement = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-handle'))
   svSpaceElement   = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--sv-space'))
-  svSpaceContext   = this.svSpaceElement.getContext('2d', { alpha: false })!
+  svSpaceContext   = this.svSpaceElement.getContext('2d')!
   svHandleElement  = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
 
   private _redrawHueWheelRequested: boolean | undefined
-  private _redrawSvSpaceRequested: boolean | undefined
 
   constructor(private options: ReinventedColorWheelOptions) {
     this.hueWheelContext.imageSmoothingEnabled = false
@@ -112,10 +111,7 @@ export default class ReinventedColorWheel {
     if (hueChanged) {
       this.hsl[0] = this.hsv[0]
       this._redrawHueHandle()
-      if (!this._redrawSvSpaceRequested) {
-        requestAnimationFrame(this._redrawSvSpace)
-        this._redrawSvSpaceRequested = true
-      }
+      this._updateSvBackground()
     }
     if (svChanged) {
       this.hsl = ReinventedColorWheel.hsv2hsl(newHsv)
@@ -168,26 +164,24 @@ export default class ReinventedColorWheel {
     }
   }
 
-  private _redrawSvSpace = () => {
-    this._redrawSvSpaceRequested = false
+  private _redrawSvSpace() {
+    this._updateSvBackground()
     const sideLength = this.svSpaceElement.width
-    const cellWidth = sideLength / 100
-    const cellFillWidth = cellWidth + 1 | 0
-    const h = this.hsv[0]
-    const hslPrefix = `hsl(${h},`
-    const hsv0 = [h, 0, 100]
-    const hsv1 = [h, 0, 0]
     const ctx = this.svSpaceContext
-    for (let i = 0; i < 100; i++) {
-      hsv0[1] = hsv1[1] = i
-      const gradient = ctx.createLinearGradient(0, 0, 0, sideLength)
-      const color0 = ReinventedColorWheel.hsv2hsl(hsv0)
-      const color1 = ReinventedColorWheel.hsv2hsl(hsv1)
-      gradient.addColorStop(0, `${hslPrefix}${color0[1]}%,${color0[2]}%)`)
-      gradient.addColorStop(1, `${hslPrefix}${color1[1]}%,${color1[2]}%)`)
-      ctx.fillStyle = gradient
-      ctx.fillRect(i * cellWidth | 0, 0, cellFillWidth, sideLength)
-    }
+    const saturationGradient = ctx.createLinearGradient(0, 0, sideLength, 0)
+    const valueGradient = ctx.createLinearGradient(0, 0, 0, sideLength)
+    saturationGradient.addColorStop(0, 'rgba(255,255,255,1)')
+    saturationGradient.addColorStop(1, 'rgba(255,255,255,0)')
+    valueGradient.addColorStop(0, 'rgba(0,0,0,0)')
+    valueGradient.addColorStop(1, 'rgba(0,0,0,1)')
+    ctx.fillStyle = saturationGradient
+    ctx.fillRect(0, 0, sideLength, sideLength)
+    ctx.fillStyle = valueGradient
+    ctx.fillRect(0, 0, sideLength, sideLength)
+  }
+
+  private _updateSvBackground() {
+    this.svSpaceElement.style.backgroundColor = `hsl(${this.hsv[0]},100%,50%)`
   }
 
   private _redrawHueHandle() {
