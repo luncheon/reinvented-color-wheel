@@ -71,10 +71,6 @@ export default class ReinventedColorWheel {
   static rgb2hex = _rgb2hex
   static hex2rgb = _hex2rgb
 
-  hsv: number[]
-  hsl: number[]
-  rgb: number[]
-  hex: string
   wheelDiameter           = this._option('wheelDiameter')
   wheelThickness          = this._option('wheelThickness')
   handleDiameter          = this._option('handleDiameter')
@@ -91,19 +87,34 @@ export default class ReinventedColorWheel {
 
   private _redrawHueWheelRequested: boolean | undefined
 
+  private _hsv: number[]
+  private _hsl: number[]
+  private _rgb: number[]
+  private _hex: string
+
+  get hsv() { return this._hsv }
+  get hsl() { return this._hsl }
+  get rgb() { return this._rgb }
+  get hex() { return this._hex }
+
+  set hsv(value) { this._setHSV(value) }
+  set hsl(value) { this._setHSV(ReinventedColorWheel.hsl2hsv(value)) }
+  set rgb(value) { this._setHSV(ReinventedColorWheel.rgb2hsv(value)) }
+  set hex(value) { this.rgb = ReinventedColorWheel.hex2rgb(value) }
+
   constructor(private options: ReinventedColorWheelOptions) {
     this.hueWheelContext.imageSmoothingEnabled = false
     this.svSpaceContext.imageSmoothingEnabled = false
 
-    this.hsv =
+    this._hsv =
       options.hsv ? normalizeHsvOrDefault(options.hsv, defaultOptions.hsv) :
       options.hsl ? ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(options.hsl, defaultOptions.hsl)) :
       options.rgb ? ReinventedColorWheel.rgb2hsv(options.rgb) :
       options.hex ? ReinventedColorWheel.rgb2hsv(ReinventedColorWheel.hex2rgb(options.hex)) :
       defaultOptions.hsv
-    this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv)
-    this.rgb = ReinventedColorWheel.hsv2rgb(this.hsv)
-    this.hex = ReinventedColorWheel.rgb2hex(this.rgb)
+    this._hsl = ReinventedColorWheel.hsv2hsl(this._hsv)
+    this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
+    this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
     onDragStart(this.hueWheelElement, event => {
       const rect = this.hueWheelElement.getBoundingClientRect()
@@ -117,60 +128,6 @@ export default class ReinventedColorWheel {
     onDragStart(this.svSpaceElement, this._onMoveSvHandle)
     onDragMove(this.svSpaceElement, this._onMoveSvHandle)
     this.redraw()
-  }
-
-  setHSV(h?: number, s?: number, v?: number): void
-  setHSV(hsv: ArrayLike<number>): void
-  setHSV(hOrHsv?: number | ArrayLike<number>) {
-    if (typeof hOrHsv === 'object') {
-      return this.setHSV(hOrHsv[0], hOrHsv[1], hOrHsv[2])
-    }
-    const oldHsv = this.hsv
-    const newHsv = this.hsv = normalizeHsvOrDefault(arguments, oldHsv)
-    const hueChanged = oldHsv[0] - newHsv[0]
-    const svChanged = oldHsv[1] - newHsv[1] || oldHsv[2] - newHsv[2]
-    if (hueChanged) {
-      this.hsl[0] = newHsv[0]
-      this._redrawHueHandle()
-      this._updateSvBackground()
-    }
-    if (svChanged) {
-      this.hsl = ReinventedColorWheel.hsv2hsl(newHsv)
-      this._redrawSvHandle()
-      if (this.wheelReflectsSaturation && !this._redrawHueWheelRequested) {
-        requestAnimationFrame(this._redrawHueWheel)
-        this._redrawHueWheelRequested = true
-      }
-    }
-    if (hueChanged || svChanged) {
-      this.rgb = ReinventedColorWheel.hsv2rgb(newHsv)
-      this.hex = ReinventedColorWheel.rgb2hex(this.rgb)
-      this.onChange(this)
-    }
-  }
-
-  setHSL(h?: number, s?: number, l?: number): void
-  setHSL(hsl: ArrayLike<number>): void
-  setHSL(hOrHsl?: number | ArrayLike<number>) {
-    if (typeof hOrHsl === 'object') {
-      this.setHSL(hOrHsl[0], hOrHsl[1], hOrHsl[2])
-    } else {
-      this.setHSV(...ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)))
-    }
-  }
-
-  setRGB(r?: number, g?: number, b?: number): void
-  setRGB(rgb: ArrayLike<number>): void
-  setRGB(rOrRgb?: number | ArrayLike<number>) {
-    if (typeof rOrRgb === 'object') {
-      this.setRGB(rOrRgb[0], rOrRgb[1], rOrRgb[2])
-    } else {
-      this.setHSV(...ReinventedColorWheel.rgb2hsv(arguments))
-    }
-  }
-
-  setHEX(hex: string) {
-    this.setRGB(...ReinventedColorWheel.hex2rgb(hex))
   }
 
   redraw() {
@@ -188,13 +145,38 @@ export default class ReinventedColorWheel {
     this._redrawSvHandle()
   }
 
+  private _setHSV(hsv: number[]) {
+    const oldHsv = this._hsv
+    const newHsv = this._hsv = normalizeHsvOrDefault(hsv, oldHsv)
+    const hueChanged = oldHsv[0] - newHsv[0]
+    const svChanged = oldHsv[1] - newHsv[1] || oldHsv[2] - newHsv[2]
+    if (hueChanged) {
+      this._hsl[0] = newHsv[0]
+      this._redrawHueHandle()
+      this._updateSvBackground()
+    }
+    if (svChanged) {
+      this._hsl = ReinventedColorWheel.hsv2hsl(newHsv)
+      this._redrawSvHandle()
+      if (this.wheelReflectsSaturation && !this._redrawHueWheelRequested) {
+        requestAnimationFrame(this._redrawHueWheel)
+        this._redrawHueWheelRequested = true
+      }
+    }
+    if (hueChanged || svChanged) {
+      this._rgb = ReinventedColorWheel.hsv2rgb(newHsv)
+      this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
+      this.onChange(this)
+    }
+  }
+
   private _redrawHueWheel = () => {
     this._redrawHueWheelRequested = false
     const wheelDiameter = this.wheelDiameter
     const center = wheelDiameter / 2
     const radius = center - this.wheelThickness / 2
     const TO_RAD = Math.PI / 180
-    const hslPostfix = this.wheelReflectsSaturation ? `,${this.hsl[1]}%,${this.hsl[2]}%)` : ',100%,50%)'
+    const hslPostfix = this.wheelReflectsSaturation ? `,${this._hsl[1]}%,${this._hsl[2]}%)` : ',100%,50%)'
     const ctx = this.hueWheelContext
     ctx.clearRect(0, 0, wheelDiameter, wheelDiameter)
     ctx.lineWidth = this.wheelThickness
@@ -223,13 +205,13 @@ export default class ReinventedColorWheel {
   }
 
   private _updateSvBackground() {
-    this.svSpaceElement.style.backgroundColor = `hsl(${this.hsv[0]},100%,50%)`
+    this.svSpaceElement.style.backgroundColor = `hsl(${this._hsv[0]},100%,50%)`
   }
 
   private _redrawHueHandle() {
     const center = this.wheelDiameter / 2
     const wheelRadius = center - this.wheelThickness / 2
-    const angle = (this.hsv[0] - 90) * Math.PI / 180
+    const angle = (this._hsv[0] - 90) * Math.PI / 180
     const hueHandleStyle = this.hueHandleElement.style
     hueHandleStyle.left = `${wheelRadius * Math.cos(angle) + center}px`
     hueHandleStyle.top = `${wheelRadius * Math.sin(angle) + center}px`
@@ -238,8 +220,8 @@ export default class ReinventedColorWheel {
   private _redrawSvHandle() {
     const svSpaceElement = this.svSpaceElement
     const svHandleStyle = this.svHandleElement.style
-    svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this.hsv[1] / 100}px`
-    svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this.hsv[2] / 100)}px`
+    svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this._hsv[1] / 100}px`
+    svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this._hsv[2] / 100)}px`
   }
 
   private _onMoveHueHandle = (event: { clientX: number, clientY: number }) => {
@@ -248,14 +230,14 @@ export default class ReinventedColorWheel {
     const x = event.clientX - hueWheelRect.left - center
     const y = event.clientY - hueWheelRect.top - center
     const angle = Math.atan2(y, x)
-    this.setHSV(angle * 180 / Math.PI + 90)
+    this.hsv = [angle * 180 / Math.PI + 90, this.hsv[1], this.hsv[2]]
   }
 
   private _onMoveSvHandle = (event: { clientX: number, clientY: number }) => {
     const svSpaceRect = this.svSpaceElement.getBoundingClientRect()
     const s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width
     const v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height
-    this.setHSV(this.hsv[0], s, v)
+    this.hsv = [this._hsv[0], s, v]
   }
 
   private _option<P extends keyof typeof defaultOptions>(property: P): typeof defaultOptions[P] {

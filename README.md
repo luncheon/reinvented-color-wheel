@@ -61,26 +61,31 @@ var colorWheel = new ReinventedColorWheel({
   appendTo: document.getElementById("my-color-picker-container"),
 
   // followings are optional properties and their default values.
-  hsv: [0, 100, 100], // initial HSV value
-  hsl: [0, 100, 50],  // initial HSL value
-  rgb: [255, 0, 0],   // initial RGB value
-  hex: "#ff0000",     // initial HEX value
+
+  // initial color (can be specified in hsv / hsl / rgb / hex)
+  hsv: [0, 100, 100],
+  // hsl: [0, 100, 50],
+  // rgb: [255, 0, 0],
+  // hex: "#ff0000",
+
+  // appearance
   wheelDiameter: 200,
   wheelThickness: 20,
   handleDiameter: 16,
   wheelReflectsSaturation: true,
+
+  // handler
   onChange: function (color) {
-    // the argument is the ReinventedColorWheel instance itself.
-    // console.log("hsl:", color.hsl[0], color.hsl[1], color.hsl[2]);
+    // the only argument is the ReinventedColorWheel instance itself.
     // console.log("hsv:", color.hsv[0], color.hsv[1], color.hsv[2]);
   },
 });
 
 // set color in HSV / HSL / RGB / HEX
-colorWheel.setRGB(255, 255, 255);
-colorWheel.setHSL(120, 100, 50);
-colorWheel.setHSV(240, 100, 100);
-colorWheel.setHEX('#888888');
+colorWheel.rgb = [255, 128, 64];
+colorWheel.hsl = [120, 100, 50];
+colorWheel.hsv = [240, 100, 100];
+colorWheel.hex = '#888888';
 
 // get color in HSV / HSL / RGB / HEX
 console.log("hsv:", colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
