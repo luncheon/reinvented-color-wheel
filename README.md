@@ -13,7 +13,7 @@ A vanilla-js touch-friendly HSV color picker inspired by [Farbtastic Color Picke
   * c.f. [HSL and HSV - Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV)
 * Touch-friendly
 * No need jQuery
-* Lightweight (JS + CSS ~ 2.2KB minified + gzipped)
+* Lightweight (JS + CSS ~ 2.8KB minified + gzipped)
 
 
 ## Installation
@@ -61,39 +61,32 @@ var colorWheel = new ReinventedColorWheel({
   appendTo: document.getElementById("my-color-picker-container"),
 
   // followings are optional properties and their default values.
-  hsv: [0, 100, 100], // initial hsv value
-  hsl: [0, 100, 50],  // initial hsl value; if both hsl and hsv are specified, hsv is applied and hsl is ignored.
+  hsv: [0, 100, 100], // initial HSV value
+  hsl: [0, 100, 50],  // initial HSL value
+  rgb: [255, 0, 0],   // initial RGB value
+  hex: "#ff0000",     // initial HEX value
   wheelDiameter: 200,
   wheelThickness: 20,
   handleDiameter: 16,
   wheelReflectsSaturation: true,
   onChange: function (color) {
-    // the received argument `color` is the ReinventedColorWheel instance itself.
+    // the argument is the ReinventedColorWheel instance itself.
     // console.log("hsl:", color.hsl[0], color.hsl[1], color.hsl[2]);
     // console.log("hsv:", color.hsv[0], color.hsv[1], color.hsv[2]);
   },
 });
 
-// set color in HSL color space
+// set color in HSV / HSL / RGB / HEX
+colorWheel.setRGB(255, 255, 255);
 colorWheel.setHSL(120, 100, 50);
-
-// set color in HSV color space
 colorWheel.setHSV(240, 100, 100);
+colorWheel.setHEX('#888888');
 
-// get color in HSL color space
-console.log("hsl:", colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
-
-// get color in HSV color space
+// get color in HSV / HSL / RGB / HEX
 console.log("hsv:", colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
-```
-
-When you need another color format such as RGB or HEX, please check the color conversion module such as [pure-color](https://www.npmjs.com/package/pure-color).
-
-```javascript
-import hsl2rgb from "pure-color/convert/hsl2rgb";
-import rgb2hex from "pure-color/convert/rgb2hex";
-
-console.log("hex:", rgb2hex(hsl2rgb(colorWheel.hsl)));
+console.log("hsl:", colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
+console.log("rgb:", colorWheel.rgb[0], colorWheel.rgb[1], colorWheel.rgb[2]);
+console.log("hex:", colorWheel.hex);
 ```
 
 

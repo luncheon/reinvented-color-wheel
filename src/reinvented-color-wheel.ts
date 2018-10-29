@@ -1,5 +1,9 @@
-import hsl2hsv from 'pure-color/convert/hsl2hsv'
-import hsv2hsl from 'pure-color/convert/hsv2hsl'
+import _hsl2hsv from 'pure-color/convert/hsl2hsv'
+import _hsv2hsl from 'pure-color/convert/hsv2hsl'
+import _rgb2hsv from 'pure-color/convert/rgb2hsv'
+import _hsv2rgb from 'pure-color/convert/hsv2rgb'
+import _rgb2hex from 'pure-color/convert/rgb2hex'
+import _hex2rgb from 'pure-color/parse/hex'
 
 let onDragStart: (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
 let onDragMove:  (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
@@ -38,11 +42,13 @@ export interface ReinventedColorWheelOptions {
   readonly appendTo: HTMLElement
   readonly hsv?: number[]
   readonly hsl?: number[]
+  readonly rgb?: number[]
+  readonly hex?: string
   readonly wheelDiameter?: number
   readonly wheelThickness?: number
   readonly handleDiameter?: number
   readonly wheelReflectsSaturation?: boolean
-  readonly onChange?: (color: { hsl: number[], hsv: number[] }) => any
+  readonly onChange?: (color: ReinventedColorWheel) => any
 }
 
 const defaultOptions = {
@@ -58,11 +64,17 @@ const defaultOptions = {
 export default class ReinventedColorWheel {
   static default = ReinventedColorWheel
   static defaultOptions = defaultOptions
-  static hsv2hsl = hsv2hsl
-  static hsl2hsv = hsl2hsv
+  static hsv2hsl = _hsv2hsl
+  static hsl2hsv = _hsl2hsv
+  static hsv2rgb = (hsv: ArrayLike<number>) => _hsv2rgb(hsv).map(Math.round)
+  static rgb2hsv = _rgb2hsv
+  static rgb2hex = _rgb2hex
+  static hex2rgb = _hex2rgb
 
   hsv: number[]
   hsl: number[]
+  rgb: number[]
+  hex: string
   wheelDiameter           = this._option('wheelDiameter')
   wheelThickness          = this._option('wheelThickness')
   handleDiameter          = this._option('handleDiameter')
@@ -83,11 +95,16 @@ export default class ReinventedColorWheel {
     this.hueWheelContext.imageSmoothingEnabled = false
     this.svSpaceContext.imageSmoothingEnabled = false
 
-    if (!options.hsv && options.hsl) {
-      this.hsv = ReinventedColorWheel.hsl2hsv(this.hsl = normalizeHsvOrDefault(options.hsl, defaultOptions.hsl))
-    } else {
-      this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv = normalizeHsvOrDefault(options.hsv, defaultOptions.hsv))
-    }
+    this.hsv =
+      options.hsv ? normalizeHsvOrDefault(options.hsv, defaultOptions.hsv) :
+      options.hsl ? ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(options.hsl, defaultOptions.hsl)) :
+      options.rgb ? ReinventedColorWheel.rgb2hsv(options.rgb) :
+      options.hex ? ReinventedColorWheel.rgb2hsv(ReinventedColorWheel.hex2rgb(options.hex)) :
+      defaultOptions.hsv
+    this.hsl = ReinventedColorWheel.hsv2hsl(this.hsv)
+    this.rgb = ReinventedColorWheel.hsv2rgb(this.hsv)
+    this.hex = ReinventedColorWheel.rgb2hex(this.rgb)
+
     onDragStart(this.hueWheelElement, event => {
       const rect = this.hueWheelElement.getBoundingClientRect()
       if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
@@ -103,13 +120,17 @@ export default class ReinventedColorWheel {
   }
 
   setHSV(h?: number, s?: number, v?: number): void
-  setHSV() {
+  setHSV(hsv: ArrayLike<number>): void
+  setHSV(hOrHsv?: number | ArrayLike<number>) {
+    if (typeof hOrHsv === 'object') {
+      return this.setHSV(hOrHsv[0], hOrHsv[1], hOrHsv[2])
+    }
     const oldHsv = this.hsv
     const newHsv = this.hsv = normalizeHsvOrDefault(arguments, oldHsv)
     const hueChanged = oldHsv[0] - newHsv[0]
     const svChanged = oldHsv[1] - newHsv[1] || oldHsv[2] - newHsv[2]
     if (hueChanged) {
-      this.hsl[0] = this.hsv[0]
+      this.hsl[0] = newHsv[0]
       this._redrawHueHandle()
       this._updateSvBackground()
     }
@@ -122,13 +143,34 @@ export default class ReinventedColorWheel {
       }
     }
     if (hueChanged || svChanged) {
+      this.rgb = ReinventedColorWheel.hsv2rgb(newHsv)
+      this.hex = ReinventedColorWheel.rgb2hex(this.rgb)
       this.onChange(this)
     }
   }
 
   setHSL(h?: number, s?: number, l?: number): void
-  setHSL() {
-    this.setHSV(...ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)))
+  setHSL(hsl: ArrayLike<number>): void
+  setHSL(hOrHsl?: number | ArrayLike<number>) {
+    if (typeof hOrHsl === 'object') {
+      this.setHSL(hOrHsl[0], hOrHsl[1], hOrHsl[2])
+    } else {
+      this.setHSV(...ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(arguments, this.hsl)))
+    }
+  }
+
+  setRGB(r?: number, g?: number, b?: number): void
+  setRGB(rgb: ArrayLike<number>): void
+  setRGB(rOrRgb?: number | ArrayLike<number>) {
+    if (typeof rOrRgb === 'object') {
+      this.setRGB(rOrRgb[0], rOrRgb[1], rOrRgb[2])
+    } else {
+      this.setHSV(...ReinventedColorWheel.rgb2hsv(arguments))
+    }
+  }
+
+  setHEX(hex: string) {
+    this.setRGB(...ReinventedColorWheel.hex2rgb(hex))
   }
 
   redraw() {
