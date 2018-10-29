@@ -92,6 +92,11 @@ console.log("hsv:", colorWheel.hsv[0], colorWheel.hsv[1], colorWheel.hsv[2]);
 console.log("hsl:", colorWheel.hsl[0], colorWheel.hsl[1], colorWheel.hsl[2]);
 console.log("rgb:", colorWheel.rgb[0], colorWheel.rgb[1], colorWheel.rgb[2]);
 console.log("hex:", colorWheel.hex);
+
+// please call redraw() after changing some appearance properties.
+colorWheel.wheelDiameter = 400;
+colorWheel.wheelThickness = 40;
+colorWheel.redraw();
 ```
 
 
