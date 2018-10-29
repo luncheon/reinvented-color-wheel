@@ -102,6 +102,9 @@ export default class ReinventedColorWheel {
   set rgb(value) { this._setHSV(ReinventedColorWheel.rgb2hsv(value)) }
   set hex(value) { this.rgb = ReinventedColorWheel.hex2rgb(value) }
 
+  /** @deprecated */ setHSV() { this.hsv = arguments as any as number[] }
+  /** @deprecated */ setHSL() { this.hsl = arguments as any as number[] }
+
   constructor(private options: ReinventedColorWheelOptions) {
     this.hueWheelContext.imageSmoothingEnabled = false
     this.svSpaceContext.imageSmoothingEnabled = false
