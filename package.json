@@ -41,7 +41,7 @@
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.1.4"
   },
   "dependencies": {
     "pure-color": "^1.3.0"
