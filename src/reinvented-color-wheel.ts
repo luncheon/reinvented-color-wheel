@@ -270,7 +270,7 @@ function isFiniteNumber(n: any): n is number {
 }
 
 function positiveIntModulo(value: number, divisor: number) {
-  const modulo = (value + .5 | 0) % divisor
+  const modulo = Math.round(value) % divisor
   return modulo < 0 ? modulo + divisor : modulo
 }
 
