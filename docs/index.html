@@ -92,6 +92,7 @@
         text-shadow: 1px 1px 1px black;
       }
       .unit {
+        font-family: Arial, Helvetica, sans-serif;
         padding-left: .25em;
       }
     </style>
@@ -172,12 +173,12 @@
           handleDiameter: 24,
           wheelReflectsSaturation: true,
           onChange: function (color) {
-            hsvInputs[0].value = color.hsv[0]
-            hsvInputs[1].value = color.hsv[1].toFixed(2)
-            hsvInputs[2].value = color.hsv[2].toFixed(2)
-            hslInputs[0].value = color.hsl[0]
-            hslInputs[1].value = color.hsl[1].toFixed(2)
-            hslInputs[2].value = color.hsl[2].toFixed(2)
+            hsvInputs[0].value = color.hsv[0].toFixed(1)
+            hsvInputs[1].value = color.hsv[1].toFixed(1)
+            hsvInputs[2].value = color.hsv[2].toFixed(1)
+            hslInputs[0].value = color.hsl[0].toFixed(1)
+            hslInputs[1].value = color.hsl[1].toFixed(1)
+            hslInputs[2].value = color.hsl[2].toFixed(1)
             rgbInputs[0].value = color.rgb[0]
             rgbInputs[1].value = color.rgb[1]
             rgbInputs[2].value = color.rgb[2]

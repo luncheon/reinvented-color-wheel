@@ -13,8 +13,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "newLine": "LF",
-    "baseUrl": ".",
-    "types": []
+    "baseUrl": "."
   },
   "include": [
     "src/**/*"

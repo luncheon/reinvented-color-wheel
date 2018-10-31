@@ -8,16 +8,6 @@ declare module 'pure-color/convert/hsv2hsl' {
   export = hsv2hsl
 }
 
-declare module 'pure-color/convert/rgb2hsv' {
-  const rgb2hsv: (rgb: ArrayLike<number>) => number[]
-  export = rgb2hsv
-}
-
-declare module 'pure-color/convert/hsv2rgb' {
-  const hsv2rgb: (hsv: ArrayLike<number>) => number[]
-  export = hsv2rgb
-}
-
 declare module 'pure-color/convert/rgb2hex' {
   const rgb2hex: (rgb: ArrayLike<number>) => string
   export = rgb2hex

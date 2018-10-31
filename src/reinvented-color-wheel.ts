@@ -1,9 +1,10 @@
 import _hsl2hsv from 'pure-color/convert/hsl2hsv'
 import _hsv2hsl from 'pure-color/convert/hsv2hsl'
-import _rgb2hsv from 'pure-color/convert/rgb2hsv'
-import _hsv2rgb from 'pure-color/convert/hsv2rgb'
+import _rgb2hsv from './rgb2hsv'
+import _hsv2rgb from './hsv2rgb'
 import _rgb2hex from 'pure-color/convert/rgb2hex'
 import _hex2rgb from 'pure-color/parse/hex'
+import { normalizeHsvOrDefault, normalizeHsl } from './normalize'
 
 let onDragStart: (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
 let onDragMove:  (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
@@ -66,7 +67,7 @@ export default class ReinventedColorWheel {
   static defaultOptions = defaultOptions
   static hsv2hsl = _hsv2hsl
   static hsl2hsv = _hsl2hsv
-  static hsv2rgb = (hsv: ArrayLike<number>) => _hsv2rgb(hsv).map(Math.round)
+  static hsv2rgb = _hsv2rgb
   static rgb2hsv = _rgb2hsv
   static rgb2hex = _rgb2hex
   static hex2rgb = _hex2rgb
@@ -109,13 +110,15 @@ export default class ReinventedColorWheel {
     this.hueWheelContext.imageSmoothingEnabled = false
     this.svSpaceContext.imageSmoothingEnabled = false
 
-    this._hsv =
-      options.hsv ? normalizeHsvOrDefault(options.hsv, defaultOptions.hsv) :
-      options.hsl ? ReinventedColorWheel.hsl2hsv(normalizeHsvOrDefault(options.hsl, defaultOptions.hsl)) :
+    this._hsv = normalizeHsvOrDefault(
+      options.hsv ? options.hsv :
+      options.hsl ? ReinventedColorWheel.hsl2hsv(options.hsl) :
       options.rgb ? ReinventedColorWheel.rgb2hsv(options.rgb) :
       options.hex ? ReinventedColorWheel.rgb2hsv(ReinventedColorWheel.hex2rgb(options.hex)) :
+      undefined,
       defaultOptions.hsv
-    this._hsl = ReinventedColorWheel.hsv2hsl(this._hsv)
+    )
+    this._hsl = normalizeHsl(ReinventedColorWheel.hsv2hsl(this._hsv))
     this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
     this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
@@ -159,7 +162,7 @@ export default class ReinventedColorWheel {
       this._updateSvBackground()
     }
     if (svChanged) {
-      this._hsl = ReinventedColorWheel.hsv2hsl(newHsv)
+      this._hsl = normalizeHsl(ReinventedColorWheel.hsv2hsl(newHsv))
       this._redrawSvHandle()
       if (this.wheelReflectsSaturation && !this._redrawHueWheelRequested) {
         requestAnimationFrame(this._redrawHueWheel)
@@ -247,31 +250,6 @@ export default class ReinventedColorWheel {
     const option = this.options[property]
     return option !== undefined ? option! : defaultOptions[property]
   }
-}
-
-function normalizeHsvOrDefault(hsv: ArrayLike<number | undefined> | undefined, defaultHsvOrHsl: number[]) {
-  if (hsv) {
-    return [
-      isFiniteNumber(hsv[0]) ? positiveIntModulo(hsv[0]!, 360) : defaultHsvOrHsl[0],
-      isFiniteNumber(hsv[1]) ? normalizePercentage(hsv[1]!) : defaultHsvOrHsl[1],
-      isFiniteNumber(hsv[2]) ? normalizePercentage(hsv[2]!) : defaultHsvOrHsl[2],
-    ]
-  } else {
-    return defaultHsvOrHsl
-  }
-}
-
-function normalizePercentage(value: number) {
-  return value < 0 ? 0 : value > 100 ? 100 : value
-}
-
-function isFiniteNumber(n: any): n is number {
-  return typeof n === 'number' && isFinite(n)
-}
-
-function positiveIntModulo(value: number, divisor: number) {
-  const modulo = Math.round(value) % divisor
-  return modulo < 0 ? modulo + divisor : modulo
 }
 
 function createElementWithClass<K extends keyof HTMLElementTagNameMap>(tagName: K, className: string) {
