@@ -1,5 +1,9 @@
 # Reinvented Color Wheel
 
+[![npm](https://img.shields.io/npm/dm/reinvented-color-wheel.svg?style=popout-square&label=npm&colorB=orange)](https://www.npmjs.com/package/reinvented-color-wheel)
+[![jsDelivr](https://data.jsdelivr.com/v1/package/npm/reinvented-color-wheel/badge)](https://www.jsdelivr.com/package/npm/reinvented-color-wheel)
+[<img alt="WTFPL" src="https://luncheon.github.io/wtfpl-badge.png" height="20">](http://www.wtfpl.net)
+
 ![image](https://luncheon.github.io/reinvented-color-wheel/image.png)
 
 A vanilla-js touch-friendly HSV color picker inspired by [Farbtastic Color Picker](https://acko.net/blog/farbtastic-jquery-color-picker-plug-in/).
@@ -102,4 +106,4 @@ colorWheel.redraw();
 
 ## License
 
-WTFPL
+[WTFPL](http://www.wtfpl.net)
