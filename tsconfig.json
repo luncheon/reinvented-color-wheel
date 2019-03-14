@@ -9,7 +9,6 @@
     "removeComments": false,
     "preserveConstEnums": true,
     "strict": true,
-    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "newLine": "LF",

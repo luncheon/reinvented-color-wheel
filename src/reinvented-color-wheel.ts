@@ -5,39 +5,7 @@ import _hsv2rgb from './hsv2rgb'
 import _rgb2hex from 'pure-color/convert/rgb2hex'
 import _hex2rgb from 'pure-color/parse/hex'
 import { normalizeHsvOrDefault, normalizeHsl } from './normalize'
-
-let onDragStart: (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
-let onDragMove:  (element: HTMLElement, callback: (event: { clientX: number, clientY: number }) => any) => any
-
-let dragging: HTMLElement | boolean | undefined
-const pointerEventSupported = 'PointerEvent' in window
-if (!pointerEventSupported && 'ontouchend' in window) {
-  onDragStart = (element, callback) => element.addEventListener('touchstart', event => {
-    if (dragging = event.touches.length === 1 && element) {
-      event.preventDefault()
-      callback(event.targetTouches[0])
-    }
-  })
-  onDragMove = (element, callback) => element.addEventListener('touchmove', event => {
-    if (dragging === element) {
-      event.preventDefault()
-      callback(event.targetTouches[0])
-    }
-  })
-} else {
-  onDragStart = (element, callback) => element.addEventListener(pointerEventSupported ? 'pointerdown' : 'mousedown', event => {
-    if (event.button === 0) {
-      dragging = element
-      callback(event)
-    }
-  })
-  onDragMove = (element, callback) => addEventListener(pointerEventSupported ? 'pointermove' : 'mousemove', event => {
-    if (dragging === element) {
-      callback(event)
-    }
-  })
-  addEventListener(pointerEventSupported ? 'pointerup' : 'mouseup', () => { dragging = undefined })
-}
+import { onDrag } from './on-drag'
 
 export interface ReinventedColorWheelOptions {
   readonly appendTo: HTMLElement
@@ -122,17 +90,23 @@ export default class ReinventedColorWheel {
     this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
     this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
-    onDragStart(this.hueWheelElement, event => {
-      const rect = this.hueWheelElement.getBoundingClientRect()
-      if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
-        this._onMoveHueHandle(event)
-      } else {
-        dragging = undefined
-      }
-    })
-    onDragMove(this.hueWheelElement, this._onMoveHueHandle)
-    onDragStart(this.svSpaceElement, this._onMoveSvHandle)
-    onDragMove(this.svSpaceElement, this._onMoveSvHandle)
+    onDrag(
+      this.hueWheelElement,
+      event => {
+        const rect = this.hueWheelElement.getBoundingClientRect()
+        if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
+          this._onMoveHueHandle(event)
+        } else {
+          return false
+        }
+      },
+      this._onMoveHueHandle,
+    )
+    onDrag(
+      this.svSpaceElement,
+      this._onMoveSvHandle,
+      this._onMoveSvHandle
+    )
     this.redraw()
   }
 
