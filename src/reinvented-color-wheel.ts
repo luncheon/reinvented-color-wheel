@@ -9,25 +9,25 @@ import { onDrag } from './on-drag'
 
 export interface ReinventedColorWheelOptions {
   readonly appendTo: HTMLElement
-  readonly hsv?: number[]
-  readonly hsl?: number[]
-  readonly rgb?: number[]
+  readonly hsv?: readonly [number, number, number]
+  readonly hsl?: readonly [number, number, number]
+  readonly rgb?: readonly [number, number, number]
   readonly hex?: string
   readonly wheelDiameter?: number
   readonly wheelThickness?: number
   readonly handleDiameter?: number
   readonly wheelReflectsSaturation?: boolean
-  readonly onChange?: (color: ReinventedColorWheel) => any
+  readonly onChange?: (color: ReinventedColorWheel) => unknown
 }
 
-const defaultOptions = {
+const defaultOptions: Omit<Required<ReinventedColorWheelOptions>, 'appendTo' | 'rgb' | 'hex'> = {
   hsv: [0, 100, 100],
   hsl: [0, 100, 50],
   wheelDiameter: 200,
   wheelThickness: 20,
   handleDiameter: 16,
   wheelReflectsSaturation: true,
-  onChange: (() => {}) as NonNullable<ReinventedColorWheelOptions['onChange']>,
+  onChange: () => {},
 }
 
 export default class ReinventedColorWheel {
@@ -40,25 +40,25 @@ export default class ReinventedColorWheel {
   static rgb2hex = _rgb2hex
   static hex2rgb = _hex2rgb
 
-  wheelDiameter           = this._option('wheelDiameter')
-  wheelThickness          = this._option('wheelThickness')
-  handleDiameter          = this._option('handleDiameter')
-  onChange                = this._option('onChange')
-  wheelReflectsSaturation = this._option('wheelReflectsSaturation')
+  wheelDiameter           = this.options.wheelDiameter  || defaultOptions.wheelDiameter
+  wheelThickness          = this.options.wheelThickness || defaultOptions.wheelThickness
+  handleDiameter          = this.options.handleDiameter || defaultOptions.handleDiameter
+  onChange                = this.options.onChange       || defaultOptions.onChange
+  wheelReflectsSaturation = this.options.wheelReflectsSaturation !== undefined ? this.options.wheelReflectsSaturation : defaultOptions.wheelReflectsSaturation
 
-  rootElement      = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
-  hueWheelElement  = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--hue-wheel'))
-  hueWheelContext  = this.hueWheelElement.getContext('2d')!
-  hueHandleElement = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-handle'))
-  svSpaceElement   = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--sv-space'))
-  svSpaceContext   = this.svSpaceElement.getContext('2d')!
-  svHandleElement  = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
+  readonly rootElement      = this.options.appendTo.appendChild(createElementWithClass('div', 'reinvented-color-wheel'))
+  readonly hueWheelElement  = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--hue-wheel'))
+  readonly hueWheelContext  = this.hueWheelElement.getContext('2d')!
+  readonly hueHandleElement = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--hue-handle'))
+  readonly svSpaceElement   = this.rootElement.appendChild(createElementWithClass('canvas',   'reinvented-color-wheel--sv-space'))
+  readonly svSpaceContext   = this.svSpaceElement.getContext('2d')!
+  readonly svHandleElement  = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
 
   private _redrawHueWheelRequested: boolean | undefined
 
-  private _hsv: number[]
-  private _hsl: number[]
-  private _rgb: number[]
+  private _hsv: readonly [number, number, number]
+  private _hsl: readonly [number, number, number]
+  private _rgb: readonly [number, number, number]
   private _hex: string
 
   get hsv() { return this._hsv }
@@ -71,8 +71,8 @@ export default class ReinventedColorWheel {
   set rgb(value) { this._setHSV(ReinventedColorWheel.rgb2hsv(value)) }
   set hex(value) { this.rgb = ReinventedColorWheel.hex2rgb(value) }
 
-  /** @deprecated */ setHSV() { this.hsv = arguments as any as number[] }
-  /** @deprecated */ setHSL() { this.hsl = arguments as any as number[] }
+  /** @deprecated */ setHSV() { this.hsv = arguments as any }
+  /** @deprecated */ setHSL() { this.hsl = arguments as any }
 
   constructor(private options: ReinventedColorWheelOptions) {
     this.hueWheelContext.imageSmoothingEnabled = false
@@ -125,13 +125,13 @@ export default class ReinventedColorWheel {
     this._redrawSvHandle()
   }
 
-  private _setHSV(hsv: number[]) {
+  private _setHSV(hsv: readonly [number, number, number]) {
     const oldHsv = this._hsv
     const newHsv = this._hsv = normalizeHsvOrDefault(hsv, oldHsv)
     const hueChanged = oldHsv[0] - newHsv[0]
     const svChanged = oldHsv[1] - newHsv[1] || oldHsv[2] - newHsv[2]
     if (hueChanged) {
-      this._hsl[0] = newHsv[0]
+      this._hsl = [newHsv[0], this._hsl[1], this._hsl[2]]
       this._redrawHueHandle()
       this._updateSvBackground()
     }
@@ -218,11 +218,6 @@ export default class ReinventedColorWheel {
     const s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width
     const v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height
     this.hsv = [this._hsv[0], s, v]
-  }
-
-  private _option<P extends keyof typeof defaultOptions>(property: P): typeof defaultOptions[P] {
-    const option = this.options[property]
-    return option !== undefined ? option! : defaultOptions[property]
   }
 }
 

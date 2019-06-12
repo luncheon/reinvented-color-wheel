@@ -1,5 +1,5 @@
 // http://www.rapidtables.com/convert/color/rgb-to-hsv.htm
-export default function rgb2hsv(rgb: ArrayLike<number>) {
+export default function rgb2hsv(rgb: ArrayLike<number>): [number, number, number] {
   const r = rgb[0]
   const g = rgb[1]
   const b = rgb[2]

@@ -1,4 +1,7 @@
-export function normalizeHsvOrDefault(hsv: ArrayLike<number | undefined> | undefined, defaultHsvOrHsl: number[]) {
+export function normalizeHsvOrDefault(
+  hsv: ArrayLike<number | undefined> | undefined,
+  defaultHsvOrHsl: readonly [number, number, number],
+): readonly [number, number, number] {
   if (hsv) {
     return [
       isFiniteNumber(hsv[0]) ? normalizeHue(hsv[0]!)        : defaultHsvOrHsl[0],
@@ -10,7 +13,7 @@ export function normalizeHsvOrDefault(hsv: ArrayLike<number | undefined> | undef
   }
 }
 
-export function normalizeHsl(hsl: ArrayLike<number>) {
+export function normalizeHsl(hsl: ArrayLike<number>): [number, number, number] {
   return [
     normalizeHue(hsl[0]),
     normalizePercentage(hsl[1]),
