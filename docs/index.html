@@ -64,10 +64,11 @@
       label {
         display: inline-flex;
         align-items: center;
-        cursor: pointer;
+        cursor: text;
       }
       @media (hover: hover) {
-        label:hover {
+        .label-checkbox:hover {
+          cursor: pointer;
           text-decoration: underline;
         }
       }
@@ -87,6 +88,9 @@
       @media (max-width: 540px) {
         .input-color:not(#hex) {
           width: 4em;
+        }
+        label, input {
+          font-size: 93.75%;
         }
       }
       #hex {
@@ -113,12 +117,12 @@
       </aside>
     </header>
     <div id="color-wheel-container"></div>
-    <label style="margin: 1em 0;">
+    <label class="label-checkbox" style="margin: 1em 0;">
       <input type="checkbox" checked onchange="colorWheel.wheelReflectsSaturation = this.checked; colorWheel.redraw()">
       <span>wheel reflects saturation</span>
     </label>
     <div>
-      HEX: <input id="hex" class="input-color" onchange="colorWheel.hex = this.value">
+      <label class="label-color-element">HEX</label><input id="hex" class="input-color" onchange="colorWheel.hex = this.value">
     </div>
     <div class="color-tables">
       <table>
@@ -171,6 +175,11 @@
         var hslInputs = [document.getElementById('hsl-h'), document.getElementById('hsl-s'), document.getElementById('hsl-l')]
         var rgbInputs = [document.getElementById('rgb-r'), document.getElementById('rgb-g'), document.getElementById('rgb-b')]
         var hexInput = document.getElementById('hex')
+        function set(input, value) {
+          if (input !== document.activeElement) {
+            input.value = value
+          }
+        }
         window.colorWheel = new ReinventedColorWheel({
           appendTo: document.getElementById('color-wheel-container'),
           wheelDiameter: 300,
@@ -178,16 +187,16 @@
           handleDiameter: 24,
           wheelReflectsSaturation: true,
           onChange: function (color) {
-            hsvInputs[0].value = color.hsv[0].toFixed(1)
-            hsvInputs[1].value = color.hsv[1].toFixed(1)
-            hsvInputs[2].value = color.hsv[2].toFixed(1)
-            hslInputs[0].value = color.hsl[0].toFixed(1)
-            hslInputs[1].value = color.hsl[1].toFixed(1)
-            hslInputs[2].value = color.hsl[2].toFixed(1)
-            rgbInputs[0].value = color.rgb[0]
-            rgbInputs[1].value = color.rgb[1]
-            rgbInputs[2].value = color.rgb[2]
-            hexInput.value = color.hex
+            set(hsvInputs[0], color.hsv[0].toFixed(1))
+            set(hsvInputs[1], color.hsv[1].toFixed(1))
+            set(hsvInputs[2], color.hsv[2].toFixed(1))
+            set(hslInputs[0], color.hsl[0].toFixed(1))
+            set(hslInputs[1], color.hsl[1].toFixed(1))
+            set(hslInputs[2], color.hsl[2].toFixed(1))
+            set(rgbInputs[0], color.rgb[0])
+            set(rgbInputs[1], color.rgb[1])
+            set(rgbInputs[2], color.rgb[2])
+            set(hexInput, color.hex)
             hexInput.style.backgroundColor = color.hex
             document.getElementsByTagName('h1')[0].style.color = color.hex
           },
