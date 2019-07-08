@@ -1,0 +1,11 @@
+{
+  "name": "reinvented-color-wheel-verify-ts2.1",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "tsc -p ."
+  },
+  "dependencies": {
+    "typescript": "^2.1.6"
+  }
+}

@@ -21,7 +21,8 @@
     "build:css:min": "cleancss css/reinvented-color-wheel.css -o css/reinvented-color-wheel.min.css",
     "build:es": "tsc -p . --outDir es/",
     "build:bundle": "rollup -c",
-    "test": "jest"
+    "test": "jest",
+    "verify": "cd verify/ts2.1 && npm ci && npm t"
   },
   "keywords": [
     "color",

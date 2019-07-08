@@ -1,7 +1,7 @@
 export function normalizeHsvOrDefault(
   hsv: ArrayLike<number | undefined> | undefined,
-  defaultHsvOrHsl: readonly [number, number, number],
-): readonly [number, number, number] {
+  defaultHsvOrHsl: Readonly<[number, number, number]>,
+): Readonly<[number, number, number]> {
   if (hsv) {
     return [
       isFiniteNumber(hsv[0]) ? normalizeHue(hsv[0]!)        : defaultHsvOrHsl[0],

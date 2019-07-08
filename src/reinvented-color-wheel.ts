@@ -9,18 +9,26 @@ import { onDrag } from './on-drag'
 
 export interface ReinventedColorWheelOptions {
   readonly appendTo: HTMLElement
-  readonly hsv?: readonly [number, number, number]
-  readonly hsl?: readonly [number, number, number]
-  readonly rgb?: readonly [number, number, number]
+  readonly hsv?: Readonly<[number, number, number]>
+  readonly hsl?: Readonly<[number, number, number]>
+  readonly rgb?: Readonly<[number, number, number]>
   readonly hex?: string
   readonly wheelDiameter?: number
   readonly wheelThickness?: number
   readonly handleDiameter?: number
   readonly wheelReflectsSaturation?: boolean
-  readonly onChange?: (color: ReinventedColorWheel) => unknown
+  readonly onChange?: (color: ReinventedColorWheel) => any
 }
 
-const defaultOptions: Omit<Required<ReinventedColorWheelOptions>, 'appendTo' | 'rgb' | 'hex'> = {
+const defaultOptions: {
+  hsv: [number, number, number],
+  hsl: [number, number, number],
+  wheelDiameter: number,
+  wheelThickness: number,
+  handleDiameter: number,
+  wheelReflectsSaturation: boolean,
+  onChange: (color: ReinventedColorWheel) => any,
+} = {
   hsv: [0, 100, 100],
   hsl: [0, 100, 50],
   wheelDiameter: 200,
@@ -56,20 +64,20 @@ export default class ReinventedColorWheel {
 
   private _redrawHueWheelRequested: boolean | undefined
 
-  private _hsv: readonly [number, number, number]
-  private _hsl: readonly [number, number, number]
-  private _rgb: readonly [number, number, number]
+  private _hsv: Readonly<[number, number, number]>
+  private _hsl: Readonly<[number, number, number]>
+  private _rgb: Readonly<[number, number, number]>
   private _hex: string
 
-  get hsv() { return this._hsv }
-  get hsl() { return this._hsl }
-  get rgb() { return this._rgb }
-  get hex() { return this._hex }
+  get hsv(): Readonly<[number, number, number]> { return this._hsv }
+  get hsl(): Readonly<[number, number, number]> { return this._hsl }
+  get rgb(): Readonly<[number, number, number]> { return this._rgb }
+  get hex(): string { return this._hex }
 
-  set hsv(value) { this._setHSV(value) }
-  set hsl(value) { this._setHSV(ReinventedColorWheel.hsl2hsv(value)) }
-  set rgb(value) { this._setHSV(ReinventedColorWheel.rgb2hsv(value)) }
-  set hex(value) { this.rgb = ReinventedColorWheel.hex2rgb(value) }
+  set hsv(value: Readonly<[number, number, number]>) { this._setHSV(value) }
+  set hsl(value: Readonly<[number, number, number]>) { this._setHSV(ReinventedColorWheel.hsl2hsv(value)) }
+  set rgb(value: Readonly<[number, number, number]>) { this._setHSV(ReinventedColorWheel.rgb2hsv(value)) }
+  set hex(value: string) { this.rgb = ReinventedColorWheel.hex2rgb(value) }
 
   /** @deprecated */ setHSV() { this.hsv = arguments as any }
   /** @deprecated */ setHSL() { this.hsl = arguments as any }
@@ -130,7 +138,7 @@ export default class ReinventedColorWheel {
     this._redrawSvHandle()
   }
 
-  private _setHSV(hsv: readonly [number, number, number]) {
+  private _setHSV(hsv: Readonly<[number, number, number]>) {
     const oldHsv = this._hsv
     const newHsv = this._hsv = normalizeHsvOrDefault(hsv, oldHsv)
     const hueChanged = oldHsv[0] - newHsv[0]
