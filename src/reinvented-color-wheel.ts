@@ -107,6 +107,11 @@ export default class ReinventedColorWheel {
       this._onMoveSvHandle,
       this._onMoveSvHandle
     )
+    onDrag(
+      this.svHandleElement,
+      this._onMoveSvHandle,
+      this._onMoveSvHandle
+    )
     this.redraw()
   }
 

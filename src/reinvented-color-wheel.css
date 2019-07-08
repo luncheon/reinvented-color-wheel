@@ -37,8 +37,11 @@
 .reinvented-color-wheel--sv-handle {
   position: absolute;
   box-sizing: border-box;
-  pointer-events: none;
   border-radius: 50%;
   border: 2px solid white;
   box-shadow: 0 0 0 1px black inset;
+}
+
+.reinvented-color-wheel--hue-handle {
+  pointer-events: none;
 }
