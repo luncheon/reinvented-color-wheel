@@ -38,6 +38,26 @@ const defaultOptions: {
   onChange: () => {},
 }
 
+const inverseTransform = (element: Element) => {
+  const ancestors: Element[] = [element]
+  while (element = element.parentElement!) {
+    ancestors.push(element)
+  }
+  const matrix = new DOMMatrix()
+  for (let i = ancestors.length - 1; i >= 0; i--) {
+    const style = getComputedStyle(ancestors[i])
+    const transform = style.transform
+    if (transform && transform !== 'none') {
+      const transformOrigin = style.transformOrigin!.split(' ').map(parseFloat)
+      matrix
+        .translateSelf(transformOrigin[0], transformOrigin[1])
+        .multiplySelf(new DOMMatrix(transform))
+        .translateSelf(-transformOrigin[0], -transformOrigin[1])
+    }
+  }
+  return matrix.invertSelf()
+}
+
 export default class ReinventedColorWheel {
   static default = ReinventedColorWheel
   static defaultOptions = defaultOptions
@@ -63,6 +83,8 @@ export default class ReinventedColorWheel {
   readonly svHandleElement  = this.rootElement.appendChild(createElementWithClass('div',      'reinvented-color-wheel--sv-handle'))
 
   private _redrawHueWheelRequested: boolean | undefined
+  private _inverseTransform: DOMMatrixReadOnly | undefined
+  private _center: DOMPoint | undefined
 
   private _hsv: Readonly<[number, number, number]>
   private _hsl: Readonly<[number, number, number]>
@@ -98,34 +120,52 @@ export default class ReinventedColorWheel {
     this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
     this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
-    onDrag(
-      this.hueWheelElement,
-      event => {
-        const rect = this.hueWheelElement.getBoundingClientRect()
-        if (this.hueWheelContext.getImageData(event.clientX - rect.left, event.clientY - rect.top, 1, 1).data[3]) {
-          this._onMoveHueHandle(event)
-        } else {
-          return false
-        }
-      },
-      this._onMoveHueHandle,
-    )
-    onDrag(
-      this.svSpaceElement,
-      this._onMoveSvHandle,
-      this._onMoveSvHandle
-    )
-    onDrag(
-      this.svHandleElement,
-      this._onMoveSvHandle,
-      this._onMoveSvHandle
-    )
+    const onDragStart = (element: HTMLElement) => {
+      this._inverseTransform = inverseTransform(element)
+      const rect = element.getBoundingClientRect()
+      this._center = this._inverseTransform.transformPoint({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      })
+    }
+    const onDragStartHue = (event: { clientX: number, clientY: number }) => {
+      onDragStart(this.hueWheelElement)
+      const point = this._inverseTransform!.transformPoint({ x: event.clientX, y: event.clientY })
+      const x = point.x - this._center!.x
+      const y = point.y - this._center!.y
+      const wheelInnerRadius = this.wheelDiameter / 2 - this.wheelThickness
+      if (x * x + y * y < wheelInnerRadius * wheelInnerRadius) {
+        return false
+      }
+      onDragMoveHue(event)
+    }
+    const onDragMoveHue = (event: { clientX: number, clientY: number }) => {
+      const point = this._inverseTransform!.transformPoint({ x: event.clientX, y: event.clientY })
+      const x = point.x - this._center!.x
+      const y = point.y - this._center!.y
+      const angle = Math.atan2(y, x)
+      this.hsv = [angle * 180 / Math.PI + 90, this.hsv[1], this.hsv[2]]
+    }
+    const onDragMoveSv = (event: { clientX: number, clientY: number }) => {
+      const point = this._inverseTransform!.transformPoint({ x: event.clientX, y: event.clientY })
+      const a = 100 / this.svSpaceElement.width
+      const s = (point.x - this._center!.x) * a + 50
+      const v = (this._center!.y - point.y) * a + 50
+      this.hsv = [this._hsv[0], s, v]
+    }
+    const onDragStartSv = (event: { clientX: number, clientY: number }) => {
+      onDragStart(this.svSpaceElement)
+      onDragMoveSv(event)
+    }
+    onDrag(this.hueWheelElement, onDragStartHue, onDragMoveHue)
+    onDrag(this.svSpaceElement, onDragStartSv, onDragMoveSv)
+    onDrag(this.svHandleElement, onDragStartSv, onDragMoveSv)
     this.redraw()
   }
 
   redraw() {
     this.hueWheelElement.width = this.hueWheelElement.height = this.wheelDiameter
-    this.svSpaceElement.width = this.svSpaceElement.height = (this.wheelDiameter - this.wheelThickness * 2) * Math.sqrt(2) / 2
+    this.svSpaceElement.width = this.svSpaceElement.height = (this.wheelDiameter - this.wheelThickness * 2) * Math.SQRT1_2
 
     const hueHandleStyle = this.hueHandleElement.style
     const svHandleStyle  = this.svHandleElement.style
@@ -215,22 +255,6 @@ export default class ReinventedColorWheel {
     const svHandleStyle = this.svHandleElement.style
     svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this._hsv[1] / 100}px`
     svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this._hsv[2] / 100)}px`
-  }
-
-  private _onMoveHueHandle = (event: { clientX: number, clientY: number }) => {
-    const hueWheelRect = this.hueWheelElement.getBoundingClientRect()
-    const center = this.wheelDiameter / 2
-    const x = event.clientX - hueWheelRect.left - center
-    const y = event.clientY - hueWheelRect.top - center
-    const angle = Math.atan2(y, x)
-    this.hsv = [angle * 180 / Math.PI + 90, this.hsv[1], this.hsv[2]]
-  }
-
-  private _onMoveSvHandle = (event: { clientX: number, clientY: number }) => {
-    const svSpaceRect = this.svSpaceElement.getBoundingClientRect()
-    const s = 100 * (event.clientX - svSpaceRect.left) / svSpaceRect.width
-    const v = 100 * (svSpaceRect.bottom - event.clientY) / svSpaceRect.height
-    this.hsv = [this._hsv[0], s, v]
   }
 }
 
