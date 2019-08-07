@@ -122,7 +122,7 @@ export default class ReinventedColorWheel {
     this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
     const invertTransform = (x: number, y: number) => {
-      const m = this._inverseTransform!.multiply(new Matrix([1, 0, 0, 1, x, y]))
+      const m = this._inverseTransform!.multiply(new Matrix(`matrix(1,0,0,1,${x},${y})`))
       return { x: m.e, y: m.f }
     }
     const onDragStart = (element: HTMLElement) => {
