@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reinvented Color Wheel - A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker</title>
+    <meta name="description" content="A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker.">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono|Crafty+Girls">
+    <link rel="stylesheet" href="reinvented-color-wheel.min.css">
+    <style>
+      body {
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      header {
+        margin-bottom: 1.5em;
+      }
+      h1, a {
+        font-family: 'Crafty Girls',sans-serif;
+        font-weight: 400;
+      }
+      h1 {
+        font-size: 2.25em;
+        text-align: center;
+        margin: .5em 0 0 0;
+        line-height: 1.2;
+      }
+      aside {
+        text-align: right;
+      }
+      a {
+        color: hsl(239, 100.00%,  56%);
+        font-size: 1.25em;
+        text-decoration: none;
+        border-bottom: 1px solid;
+      }
+      @media (hover: hover) {
+        a:hover {
+          color: hsl(239, 100.00%,  80%);
+        }
+      }
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+      .color-tables {
+        display: flex;
+        margin-top: 1em;
+      }
+      .color-tables > table:not(:first-child) {
+        margin-left: 1em;
+      }
+      label, input {
+        font-family: 'Roboto Mono', monospace;
+        font-size: inherit;
+        margin: 0;
+        line-height: 1.4;
+      }
+      label {
+        display: inline-flex;
+        align-items: center;
+        cursor: text;
+      }
+      @media (hover: hover) {
+        .label-checkbox:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
+      label > input {
+        margin-right: .5em;
+      }
+      .label-color-element::after {
+        content: ':';
+      }
+      .input-color {
+        border-radius: 4px;
+        padding: .1em .2em;
+        width: 6em;
+        text-align: right;
+        border: 1px solid grey;
+      }
+      @media (max-width: 540px) {
+        .input-color:not(#hex) {
+          width: 4em;
+        }
+        label, input {
+          font-size: 93.75%;
+        }
+      }
+      #hex {
+        outline: none;
+        border: none;
+        text-align: center;
+        color: white;
+        text-shadow: 1px 1px 1px black;
+      }
+      .unit {
+        font-family: Arial, Helvetica, sans-serif;
+        padding-left: .2em;
+      }
+      #color-wheel-container {
+        transform-origin: -100px -100px;
+        transform: translate(100px,100px) scale(1.2) skewX(35deg);
+      }
+      .reinvented-color-wheel {
+        transform-origin: 200px 200px;
+        transform: translate(100px,100px) scale(1.2) rotate(90deg);
+      }
+    </style>
+    <link rel="preload" as="script" href="https://www.google-analytics.com/analytics.js">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-64398169-1"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','UA-64398169-1');</script>
+  </head>
+  <body>
+    <header>
+      <h1>Reinvented Color&nbsp;Wheel</h1>
+      <aside>
+        <a target="_blank" href="https://github.com/luncheon/reinvented-color-wheel">Fork me on GitHub</a>
+      </aside>
+    </header>
+    <div id="color-wheel-container"></div>
+    <label class="label-checkbox" style="margin: 1em 0;">
+      <input type="checkbox" checked onchange="colorWheel.wheelReflectsSaturation = this.checked; colorWheel.redraw()">
+      <span>wheel reflects saturation</span>
+    </label>
+    <div>
+      <label class="label-color-element">HEX</label><input id="hex" class="input-color" onchange="colorWheel.hex = this.value">
+    </div>
+    <div class="color-tables">
+      <table>
+        <tr>
+          <td><label class="label-color-element">H</label></td>
+          <td><input id="hsv-h" type="number" class="input-color" oninput="colorWheel.hsv = [parseInt(this.value, 10), colorWheel.hsv[1], colorWheel.hsv[2]]"></td>
+        </tr>
+        <tr>
+          <td><label class="label-color-element">S</label></td>
+          <td><input id="hsv-s" type="number" min="0" max="100" class="input-color" oninput="colorWheel.hsv = [colorWheel.hsv[0], parseInt(this.value, 10), colorWheel.hsv[2]]"><span class="unit">%</span></td>
+        </tr>
+        <tr>
+          <td><label class="label-color-element">V</label></td>
+          <td><input id="hsv-v" type="number" min="0" max="100" class="input-color" oninput="colorWheel.hsv = [colorWheel.hsv[0], colorWheel.hsv[1], parseInt(this.value, 10)]"><span class="unit">%</span></td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <td><label class="label-color-element">H</label></td>
+          <td><input id="hsl-h" type="number" class="input-color" oninput="colorWheel.hsl = [parseInt(this.value, 10), colorWheel.hsl[1], colorWheel.hsl[2]]"></td>
+        </tr>
+        <tr>
+          <td><label class="label-color-element">S</label></td>
+          <td><input id="hsl-s" type="number" min="0" max="100" class="input-color" oninput="colorWheel.hsl = [colorWheel.hsl[0], parseInt(this.value, 10), colorWheel.hsl[2]]"><span class="unit">%</span></td>
+        </tr>
+        <tr>
+          <td><label class="label-color-element">L</label></td>
+          <td><input id="hsl-l" type="number" min="0" max="100" class="input-color" oninput="colorWheel.hsl = [colorWheel.hsl[0], colorWheel.hsl[1], parseInt(this.value, 10)]"><span class="unit">%</span></td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <td><label class="label-color-element">R</label></td>
+          <td><input id="rgb-r" type="number" min="0" max="255" class="input-color" oninput="colorWheel.rgb = [parseInt(this.value, 10), colorWheel.rgb[1], colorWheel.rgb[2]]"></td>
+        </tr>
+        <tr>
+          <td><label class="label-color-element">G</label></td>
+          <td><input id="rgb-g" type="number" min="0" max="255" class="input-color" oninput="colorWheel.rgb = [colorWheel.rgb[0], this.value, colorWheel.rgb[2]]"></td>
+        </tr>
+        <tr>
+          <td><label class="label-color-element">B</label></td>
+          <td><input id="rgb-b" type="number" min="0" max="255" class="input-color" oninput="colorWheel.rgb = [colorWheel.rgb[0], colorWheel.rgb[1], this.value]"></td>
+        </tr>
+      </table>
+    </div>
+    <script src="reinvented-color-wheel.min.js"></script>
+    <script>
+      (function () {
+        var hsvInputs = [document.getElementById('hsv-h'), document.getElementById('hsv-s'), document.getElementById('hsv-v')]
+        var hslInputs = [document.getElementById('hsl-h'), document.getElementById('hsl-s'), document.getElementById('hsl-l')]
+        var rgbInputs = [document.getElementById('rgb-r'), document.getElementById('rgb-g'), document.getElementById('rgb-b')]
+        var hexInput = document.getElementById('hex')
+        function set(input, value) {
+          if (input !== document.activeElement) {
+            input.value = value
+          }
+        }
+        window.colorWheel = new ReinventedColorWheel({
+          appendTo: document.getElementById('color-wheel-container'),
+          wheelDiameter: 300,
+          wheelThickness: 30,
+          handleDiameter: 24,
+          wheelReflectsSaturation: true,
+          onChange: function (color) {
+            set(hsvInputs[0], color.hsv[0].toFixed(1))
+            set(hsvInputs[1], color.hsv[1].toFixed(1))
+            set(hsvInputs[2], color.hsv[2].toFixed(1))
+            set(hslInputs[0], color.hsl[0].toFixed(1))
+            set(hslInputs[1], color.hsl[1].toFixed(1))
+            set(hslInputs[2], color.hsl[2].toFixed(1))
+            set(rgbInputs[0], color.rgb[0])
+            set(rgbInputs[1], color.rgb[1])
+            set(rgbInputs[2], color.rgb[2])
+            set(hexInput, color.hex)
+            hexInput.style.backgroundColor = color.hex
+            document.getElementsByTagName('h1')[0].style.color = color.hex
+          },
+        })
+        colorWheel.onChange(colorWheel)
+
+        function padStart(s, len) {
+          s = String(s)
+          while (s.length < len)
+            s = ' ' + s
+          return s
+        }
+      })()
+    </script>
+  </body>
+</html>

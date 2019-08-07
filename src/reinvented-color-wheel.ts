@@ -38,24 +38,25 @@ const defaultOptions: {
   onChange: () => {},
 }
 
+const Matrix: typeof DOMMatrixReadOnly = (window as any).DOMMatrix || (window as any).MSCSSMatrix
 const inverseTransform = (element: Element) => {
   const ancestors: Element[] = [element]
   while (element = element.parentElement!) {
     ancestors.push(element)
   }
-  const matrix = new DOMMatrix()
+  let matrix = new Matrix()
   for (let i = ancestors.length - 1; i >= 0; i--) {
     const style = getComputedStyle(ancestors[i])
     const transform = style.transform
     if (transform && transform !== 'none') {
       const transformOrigin = style.transformOrigin!.split(' ').map(parseFloat)
-      matrix
-        .translateSelf(transformOrigin[0], transformOrigin[1])
-        .multiplySelf(new DOMMatrix(transform))
-        .translateSelf(-transformOrigin[0], -transformOrigin[1])
+      matrix = matrix
+        .translate(transformOrigin[0], transformOrigin[1])
+        .multiply(new Matrix(transform))
+        .translate(-transformOrigin[0], -transformOrigin[1])
     }
   }
-  return matrix.invertSelf()
+  return matrix.inverse()
 }
 
 export default class ReinventedColorWheel {
@@ -84,7 +85,7 @@ export default class ReinventedColorWheel {
 
   private _redrawHueWheelRequested: boolean | undefined
   private _inverseTransform: DOMMatrixReadOnly | undefined
-  private _center: DOMPoint | undefined
+  private _center: { x: number, y: number } | undefined
 
   private _hsv: Readonly<[number, number, number]>
   private _hsl: Readonly<[number, number, number]>
@@ -120,17 +121,18 @@ export default class ReinventedColorWheel {
     this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv)
     this._hex = ReinventedColorWheel.rgb2hex(this._rgb)
 
+    const invertTransform = (x: number, y: number) => {
+      const m = this._inverseTransform!.multiply(new Matrix([1, 0, 0, 1, x, y]))
+      return { x: m.e, y: m.f }
+    }
     const onDragStart = (element: HTMLElement) => {
       this._inverseTransform = inverseTransform(element)
       const rect = element.getBoundingClientRect()
-      this._center = this._inverseTransform.transformPoint({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      })
+      this._center = invertTransform(rect.left + rect.width / 2, rect.top + rect.height / 2)
     }
     const onDragStartHue = (event: { clientX: number, clientY: number }) => {
       onDragStart(this.hueWheelElement)
-      const point = this._inverseTransform!.transformPoint({ x: event.clientX, y: event.clientY })
+      const point = invertTransform(event.clientX, event.clientY)
       const x = point.x - this._center!.x
       const y = point.y - this._center!.y
       const wheelInnerRadius = this.wheelDiameter / 2 - this.wheelThickness
@@ -140,14 +142,14 @@ export default class ReinventedColorWheel {
       onDragMoveHue(event)
     }
     const onDragMoveHue = (event: { clientX: number, clientY: number }) => {
-      const point = this._inverseTransform!.transformPoint({ x: event.clientX, y: event.clientY })
+      const point = invertTransform(event.clientX, event.clientY)
       const x = point.x - this._center!.x
       const y = point.y - this._center!.y
       const angle = Math.atan2(y, x)
       this.hsv = [angle * 180 / Math.PI + 90, this.hsv[1], this.hsv[2]]
     }
     const onDragMoveSv = (event: { clientX: number, clientY: number }) => {
-      const point = this._inverseTransform!.transformPoint({ x: event.clientX, y: event.clientY })
+      const point = invertTransform(event.clientX, event.clientY)
       const a = 100 / this.svSpaceElement.width
       const s = (point.x - this._center!.x) * a + 50
       const v = (this._center!.y - point.y) * a + 50

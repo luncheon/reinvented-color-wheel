@@ -16,11 +16,12 @@
   ],
   "scripts": {
     "clean": "rimraf css/ es/ cjs/ iife/",
-    "build": "npm run clean && npm run build:css && npm run build:css:min && npm run build:es && npm run build:bundle",
+    "build": "npm run clean && npm run build:css && npm run build:css:min && npm run build:es && npm run build:bundle && npm run copy",
     "build:css": "copyup src/reinvented-color-wheel.css css/",
     "build:css:min": "cleancss css/reinvented-color-wheel.css -o css/reinvented-color-wheel.min.css",
     "build:es": "tsc -p . --outDir es/",
     "build:bundle": "rollup -c",
+    "copy": "copyfiles -f iife/reinvented-color-wheel.min.js css/reinvented-color-wheel.min.css docs/",
     "test": "jest",
     "verify": "cd verify/ts2.1 && npm ci && npm t"
   },
@@ -40,7 +41,7 @@
     "copyfiles": "^2.1.1",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3",
-    "rollup": "^1.19.3",
+    "rollup": "^1.19.4",
     "rollup-plugin-commonjs": "^10.0.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.1.1",
