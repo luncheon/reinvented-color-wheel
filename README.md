@@ -17,7 +17,7 @@ A vanilla-js touch-friendly HSV color picker inspired by [Farbtastic Color Picke
   * c.f. [HSL and HSV - Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV)
 * Touch-friendly
 * No need jQuery
-* Lightweight (JS + CSS ~ 2.8 KB minified + gzipped)
+* Lightweight (JS + CSS ~ 3.1 KB minified + gzipped)
 
 
 ## Installation
@@ -36,24 +36,24 @@ import ReinventedColorWheel from "reinvented-color-wheel";
 ### via CDN ([jsDelivr](https://www.jsdelivr.com/package/npm/reinvented-color-wheel))
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.6/css/reinvented-color-wheel.min.css">
-<script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.6"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.7/css/reinvented-color-wheel.min.css">
+<script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.7"></script>
 <script>/* `window.ReinventedColorWheel` object is available */</script>
 ```
 
 or for [modern browsers](https://caniuse.com/#feat=es6-module):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.6/css/reinvented-color-wheel.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.7/css/reinvented-color-wheel.min.css">
 <script type="module">
-  import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.6/es/reinvented-color-wheel.bundle.min.js";
+  import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.7/es/reinvented-color-wheel.bundle.min.js";
 </script>
 ```
 
 ### Download directly
 
-<a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.6/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
-<a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.6/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
+<a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.7/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
+<a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.7/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
 
 
 ## Usage
