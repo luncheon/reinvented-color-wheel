@@ -1,6 +1,6 @@
 {
   "name": "reinvented-color-wheel",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker.",
   "repository": "luncheon/reinvented-color-wheel",
   "main": "cjs/reinvented-color-wheel.js",
@@ -40,7 +40,7 @@
     "clean-css-cli": "^4.3.0",
     "copyfiles": "^2.1.1",
     "jest": "^24.9.0",
-    "rimraf": "^2.7.1",
+    "rimraf": "^3.0.0",
     "rollup": "^1.20.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
