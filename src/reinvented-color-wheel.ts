@@ -38,7 +38,7 @@ const defaultOptions: {
   onChange: () => {},
 }
 
-const Matrix: typeof DOMMatrixReadOnly = (window as any).DOMMatrix || (window as any).MSCSSMatrix
+const Matrix: typeof DOMMatrixReadOnly = (window as any).DOMMatrix || (window as any).WebKitCSSMatrix || (window as any).MSCSSMatrix
 const inverseTransform = (element: Element) => {
   const ancestors: Element[] = [element]
   while (element = element.parentElement!) {
