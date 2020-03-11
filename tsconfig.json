@@ -5,12 +5,11 @@
     "moduleResolution": "node",
     "declaration": true,
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
     "removeComments": false,
-    "preserveConstEnums": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "newLine": "LF",
     "baseUrl": "."
   },

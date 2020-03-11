@@ -1,5 +1,5 @@
 node_modules/
-css/
-es/
-cjs/
-iife/
+/css/*.min.css
+/es/
+/cjs/
+/iife/
