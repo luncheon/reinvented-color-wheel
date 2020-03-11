@@ -2,29 +2,21 @@ export const onDrag: (
   element: HTMLElement,
   onDragStart: (event: { clientX: number, clientY: number }) => boolean | void,
   onDragMove: (event: { clientX: number, clientY: number }) => void,
-) => any =
+) => void =
 
 // for IE, Edge, Firefox, Chrome
 'PointerEvent' in window ?
 (element, onDragStart, onDragMove) => {
-  let dragging = false
-
   element.addEventListener('pointerdown', function (event) {
     if (event.button === 0 && onDragStart(event) !== false) {
-      dragging = true
       this.setPointerCapture(event.pointerId)
     }
   })
 
   element.addEventListener('pointermove', function (event) {
-    if (dragging) {
+    if (this.hasPointerCapture(event.pointerId)) {
       onDragMove(event)
     }
-  })
-
-  element.addEventListener('pointerup', function (event) {
-    dragging = false
-    this.releasePointerCapture(event.pointerId)
   })
 }
 
@@ -55,7 +47,7 @@ export const onDrag: (
     onDragMove(event)
   }
 
-  const onMouseUp = function (event: MouseEvent) {
+  const onMouseUp = function () {
     removeEventListener('mouseup', onMouseUp)
     removeEventListener('mousemove', onMouseMove)
   }
