@@ -8,7 +8,7 @@
     <meta name="description" content="A vanilla-js touch-friendly HSV color picker inspired by Farbtastic Color Picker.">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono|Crafty+Girls">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono|Crafty+Girls|Literata">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.9/css/reinvented-color-wheel.min.css">
     <style>
       body {
@@ -16,11 +16,13 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        font-family: Literata,serif;
+        font-size: 1.25rem;
       }
       header {
         margin-bottom: 1.5em;
       }
-      h1, a {
+      h1 {
         font-family: 'Crafty Girls',sans-serif;
         font-weight: 400;
       }
@@ -35,7 +37,6 @@
       }
       a {
         color: hsl(239, 100.00%,  56%);
-        font-size: 1.25em;
         text-decoration: none;
         border-bottom: 1px solid;
       }
@@ -57,7 +58,7 @@
       }
       label, input {
         font-family: 'Roboto Mono', monospace;
-        font-size: inherit;
+        font-size: 1rem;
         margin: 0;
         line-height: 1.4;
       }
@@ -112,9 +113,7 @@
   <body>
     <header>
       <h1>Reinvented Color&nbsp;Wheel</h1>
-      <aside>
-        <a target="_blank" href="https://github.com/luncheon/reinvented-color-wheel">Fork me on GitHub</a>
-      </aside>
+      <p style="text-align: center; margin: 0;">Compare to a <a href="https://luncheon.github.io/lch-color-wheel/">L*C*h Color Wheel</a></p>
     </header>
     <div id="color-wheel-container"></div>
     <label class="label-checkbox" style="margin: 1em 0;">
@@ -168,6 +167,9 @@
         </tr>
       </table>
     </div>
+    <aside style="margin: 16px 0;">
+      <a target="_blank" href="https://github.com/luncheon/reinvented-color-wheel">GitHub</a>
+    </aside>
     <script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.9"></script>
     <script>
       (function () {

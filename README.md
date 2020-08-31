@@ -107,3 +107,7 @@ colorWheel.redraw();
 ## License
 
 [WTFPL](http://www.wtfpl.net)
+
+## Sister Package
+
+[lch-color-wheel](https://github.com/luncheon/lch-color-wheel): **L\*C\*h** color wheel
