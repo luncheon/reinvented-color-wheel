@@ -253,10 +253,12 @@ export default class ReinventedColorWheel {
   }
 
   private _redrawSvHandle() {
-    const svSpaceElement = this.svSpaceElement
+    const svSpaceElementWidth = this.svSpaceElement.width
     const svHandleStyle = this.svHandleElement.style
-    svHandleStyle.left = `${svSpaceElement.offsetLeft + svSpaceElement.offsetWidth * this._hsv[1] / 100}px`
-    svHandleStyle.top = `${svSpaceElement.offsetTop + svSpaceElement.offsetHeight * (1 - this._hsv[2] / 100)}px`
+    const offset = (this.wheelDiameter - svSpaceElementWidth) / 2
+    const hsv = this._hsv
+    svHandleStyle.left = `${offset + svSpaceElementWidth * hsv[1] / 100}px`
+    svHandleStyle.top = `${offset + svSpaceElementWidth * (1 - hsv[2] / 100)}px`
   }
 }
 
