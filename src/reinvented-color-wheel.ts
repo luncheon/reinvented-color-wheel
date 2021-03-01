@@ -59,6 +59,9 @@ const inverseTransform = (element: Element) => {
   return matrix.inverse()
 }
 
+const tripletsAreEqual = (a: Readonly<[number, number, number]>, b: Readonly<[number, number, number]>) =>
+  a === b || (a[0] === b[0] && a[1] === b[1] && a[2] === b[2])
+
 export default class ReinventedColorWheel {
   static default = ReinventedColorWheel
   static defaultOptions = defaultOptions
@@ -97,10 +100,18 @@ export default class ReinventedColorWheel {
   get rgb(): Readonly<[number, number, number]> { return this._rgb }
   get hex(): string { return this._hex }
 
-  set hsv(value: Readonly<[number, number, number]>) { this._setHSV(value) }
-  set hsl(value: Readonly<[number, number, number]>) { this._setHSV(ReinventedColorWheel.hsl2hsv(value)) }
-  set rgb(value: Readonly<[number, number, number]>) { this._setHSV(ReinventedColorWheel.rgb2hsv(value)) }
-  set hex(value: string) { this.rgb = ReinventedColorWheel.hex2rgb(value) }
+  set hsv(value: Readonly<[number, number, number]>) {
+    tripletsAreEqual(this._hsv, value) || this._setHSV(value)
+  }
+  set hsl(value: Readonly<[number, number, number]>) {
+    tripletsAreEqual(this._hsl, value) || this._setHSV(ReinventedColorWheel.hsl2hsv(value))
+  }
+  set rgb(value: Readonly<[number, number, number]>) {
+    tripletsAreEqual(this._rgb, value) || this._setHSV(ReinventedColorWheel.rgb2hsv(value))
+  }
+  set hex(value: string) {
+    this._hex !== value && (this.rgb = ReinventedColorWheel.hex2rgb(value))
+  }
 
   /** @deprecated */ setHSV() { this.hsv = arguments as any }
   /** @deprecated */ setHSL() { this.hsl = arguments as any }

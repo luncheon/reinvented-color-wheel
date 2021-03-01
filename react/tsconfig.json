@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "allowSyntheticDefaultImports": false,
+    "baseUrl": "."
+  },
+  "include": [],
+  "exclude": [],
+  "files": ["index.tsx"]
+}
