@@ -36,24 +36,24 @@ import ReinventedColorWheel from "reinvented-color-wheel";
 ### via CDN ([jsDelivr](https://www.jsdelivr.com/package/npm/reinvented-color-wheel))
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.10/css/reinvented-color-wheel.min.css">
-<script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.10"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.0/css/reinvented-color-wheel.min.css">
+<script src="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.0"></script>
 <script>/* `window.ReinventedColorWheel` object is available */</script>
 ```
 
 or for [modern browsers](https://caniuse.com/#feat=es6-module):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.10/css/reinvented-color-wheel.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.0/css/reinvented-color-wheel.min.css">
 <script type="module">
-  import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.10/es/reinvented-color-wheel.bundle.min.js";
+  import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.0/es/reinvented-color-wheel.bundle.min.js";
 </script>
 ```
 
 ### Download directly
 
-<a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.10/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
-<a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.2.10/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
+<a target="_blank" download="reinvented-color-wheel.min.css" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.0/css/reinvented-color-wheel.min.css">reinvented-color-wheel.min.css</a>  
+<a target="_blank" download="reinvented-color-wheel.min.js"  href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.0/iife/reinvented-color-wheel.min.js">reinvented-color-wheel.min.js</a>
 
 
 ## Usage
@@ -86,9 +86,9 @@ var colorWheel = new ReinventedColorWheel({
 });
 
 // set color in HSV / HSL / RGB / HEX
-colorWheel.rgb = [255, 128, 64];
-colorWheel.hsl = [120, 100, 50];
 colorWheel.hsv = [240, 100, 100];
+colorWheel.hsl = [120, 100, 50];
+colorWheel.rgb = [255, 128, 64];
 colorWheel.hex = '#888888';
 
 // get color in HSV / HSL / RGB / HEX
@@ -101,6 +101,39 @@ console.log("hex:", colorWheel.hex);
 colorWheel.wheelDiameter = 400;
 colorWheel.wheelThickness = 40;
 colorWheel.redraw();
+```
+
+
+## React Component
+
+This package contains the React component wrapping the color wheel.  
+The options above except for `appendTo` can be specified, and each option is optional.
+
+```tsx
+import React from 'react'
+import ReinventedColorWheel from 'reinvented-color-wheel/react'
+import 'reinvented-color-wheel/css/reinvented-color-wheel.min.css'
+
+const App = () => {
+  const [hex, setHex] = React.useState('#000000')
+  return (
+    <>
+      <ReinventedColorWheel
+        // hsv={[0, 100, 100]}
+        // hsl={[0, 100, 50]}
+        // rgb={[255, 0, 0]}
+        // hex="#ff0000"
+        hex={hex}
+        wheelDiameter={200}
+        wheelThickness={20}
+        handleDiameter={16}
+        wheelReflectsSaturation
+        onChange={({ hex }) => setHex(hex)}
+      />
+      <input value={hex} onChange={e => setHex(e.target.value)} />
+    </>
+  )
+}
 ```
 
 
