@@ -1,7 +1,8 @@
-import rgb2hsv from '../src/rgb2hsv'
+import { it } from '@jest/globals'
+import { deepStrictEqual } from 'assert'
 import hsv2rgb from '../src/hsv2rgb'
 import { normalizeHsvOrDefault } from '../src/normalize'
-import { deepStrictEqual } from 'assert'
+import rgb2hsv from '../src/rgb2hsv'
 
 it('hsv2rgb(rgb2hsv([r, g, b])) = [r, g, b]', () => {
   const defaultHsv = [NaN, NaN, NaN] as const
