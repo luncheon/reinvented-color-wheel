@@ -8,6 +8,7 @@ const config = (format, extension, compress, external) => ({
   external,
   output: {
     format,
+    exports: 'default',
     file: `${format}/reinvented-color-wheel.${extension}`,
     name: 'ReinventedColorWheel',
   },
