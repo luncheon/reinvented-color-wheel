@@ -22,9 +22,7 @@
     return target;
   };
   var __toModule = (module) => {
-    if (module && module.__esModule)
-      return module;
-    return __exportStar(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", {value: module, enumerable: true})), module);
+    return __exportStar(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? {get: () => module.default, enumerable: true} : {value: module, enumerable: true})), module);
   };
 
   // node_modules/object-assign/index.js
@@ -21120,11 +21118,11 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
 
   // react/sample.tsx
   var App = () => {
-    const [hex, setHex] = import_react.useState("#0000ff");
-    const [wheelDiameter, setWheelDiameter] = import_react.useState(300);
-    const [wheelThickness, setWheelThickness] = import_react.useState(30);
-    const [handleDiameter, setHandleDiameter] = import_react.useState(20);
-    const [wheelReflectsSaturation, setWheelReflectsSaturation] = import_react.useState(true);
+    const [hex, setHex] = (0, import_react.useState)("#0000ff");
+    const [wheelDiameter, setWheelDiameter] = (0, import_react.useState)(300);
+    const [wheelThickness, setWheelThickness] = (0, import_react.useState)(30);
+    const [handleDiameter, setHandleDiameter] = (0, import_react.useState)(20);
+    const [wheelReflectsSaturation, setWheelReflectsSaturation] = (0, import_react.useState)(true);
     return /* @__PURE__ */ import_react.default.createElement("div", {
       style: {display: "flex"}
     }, /* @__PURE__ */ import_react.default.createElement("div", {
