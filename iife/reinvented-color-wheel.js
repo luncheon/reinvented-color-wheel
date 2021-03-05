@@ -161,6 +161,8 @@ var ReinventedColorWheel = (function () {
       return typeof n === 'number' && isFinite(n);
   }
 
+  var window = (typeof globalThis !== 'undefined' ? globalThis : self);
+
   var onDrag = 
   // for IE, Edge, Firefox, Chrome
   'PointerEvent' in window ?

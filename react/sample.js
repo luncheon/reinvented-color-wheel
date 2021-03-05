@@ -478,7 +478,7 @@
             }
           }
         }
-        var ReactElement = function(type, key, ref, self, source, owner, props) {
+        var ReactElement = function(type, key, ref, self2, source, owner, props) {
           var element = {
             $$typeof: REACT_ELEMENT_TYPE,
             type,
@@ -499,7 +499,7 @@
               configurable: false,
               enumerable: false,
               writable: false,
-              value: self
+              value: self2
             });
             Object.defineProperty(element, "_source", {
               configurable: false,
@@ -519,7 +519,7 @@
           var props = {};
           var key = null;
           var ref = null;
-          var self = null;
+          var self2 = null;
           var source = null;
           if (config != null) {
             if (hasValidRef(config)) {
@@ -531,7 +531,7 @@
             if (hasValidKey(config)) {
               key = "" + config.key;
             }
-            self = config.__self === void 0 ? null : config.__self;
+            self2 = config.__self === void 0 ? null : config.__self;
             source = config.__source === void 0 ? null : config.__source;
             for (propName in config) {
               if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
@@ -573,7 +573,7 @@
               }
             }
           }
-          return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
+          return ReactElement(type, key, ref, self2, source, ReactCurrentOwner.current, props);
         }
         function cloneAndReplaceKey(oldElement, newKey) {
           var newElement = ReactElement(oldElement.type, newKey, oldElement.ref, oldElement._self, oldElement._source, oldElement._owner, oldElement.props);
@@ -589,7 +589,7 @@
           var props = _assign({}, element.props);
           var key = element.key;
           var ref = element.ref;
-          var self = element._self;
+          var self2 = element._self;
           var source = element._source;
           var owner = element._owner;
           if (config != null) {
@@ -624,7 +624,7 @@
             }
             props.children = childArray;
           }
-          return ReactElement(element.type, key, ref, self, source, owner, props);
+          return ReactElement(element.type, key, ref, self2, source, owner, props);
         }
         function isValidElement(object) {
           return typeof object === "object" && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
@@ -20781,8 +20781,11 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     return typeof n === "number" && isFinite(n);
   }
 
+  // es/window.js
+  var window2 = typeof globalThis !== "undefined" ? globalThis : self;
+
   // es/on-drag.js
-  var onDrag = "PointerEvent" in window ? function(element, onDragStart, onDragMove) {
+  var onDrag = "PointerEvent" in window2 ? function(element, onDragStart, onDragMove) {
     element.addEventListener("pointerdown", function(event) {
       if (event.button === 0 && onDragStart(event) !== false) {
         this.setPointerCapture(event.pointerId);
@@ -20793,7 +20796,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
         onDragMove(event);
       }
     });
-  } : "ontouchend" in window ? function(element, onDragStart, onDragMove) {
+  } : "ontouchend" in window2 ? function(element, onDragStart, onDragMove) {
     var dragging = false;
     element.addEventListener("touchstart", function(event) {
       if (event.touches.length === 1 && onDragStart(event.touches[0]) !== false) {
@@ -20834,7 +20837,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     onChange: function() {
     }
   };
-  var Matrix = window.DOMMatrix || window.WebKitCSSMatrix || window.MSCSSMatrix;
+  var Matrix = window2.DOMMatrix || window2.WebKitCSSMatrix || window2.MSCSSMatrix;
   var inverseTransform = function(element) {
     var ancestors = [element];
     while (element = element.parentElement) {

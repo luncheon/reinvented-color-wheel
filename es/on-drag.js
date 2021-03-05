@@ -1,3 +1,4 @@
+import { window } from './window';
 export var onDrag = 
 // for IE, Edge, Firefox, Chrome
 'PointerEvent' in window ?

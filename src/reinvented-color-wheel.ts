@@ -6,6 +6,7 @@ import _rgb2hex from 'pure-color/convert/rgb2hex'
 import _hex2rgb from 'pure-color/parse/hex'
 import { normalizeHsvOrDefault, normalizeHsl } from './normalize'
 import { onDrag } from './on-drag'
+import { window } from './window'
 
 export interface ReinventedColorWheelOptions {
   readonly appendTo: HTMLElement
@@ -38,7 +39,7 @@ const defaultOptions: {
   onChange: () => {},
 }
 
-const Matrix: typeof DOMMatrixReadOnly = (window as any).DOMMatrix || (window as any).WebKitCSSMatrix || (window as any).MSCSSMatrix
+const Matrix: typeof DOMMatrixReadOnly = window.DOMMatrix || window.WebKitCSSMatrix || window.MSCSSMatrix
 const inverseTransform = (element: Element) => {
   const ancestors: Element[] = [element]
   while (element = element.parentElement!) {

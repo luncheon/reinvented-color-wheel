@@ -1,3 +1,5 @@
+import { window } from './window'
+
 export const onDrag: (
   element: HTMLElement,
   onDragStart: (event: { clientX: number, clientY: number }) => boolean | void,

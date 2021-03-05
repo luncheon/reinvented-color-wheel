@@ -6,6 +6,7 @@ import _rgb2hex from 'pure-color/convert/rgb2hex';
 import _hex2rgb from 'pure-color/parse/hex';
 import { normalizeHsvOrDefault, normalizeHsl } from './normalize';
 import { onDrag } from './on-drag';
+import { window } from './window';
 var defaultOptions = {
     hsv: [0, 100, 100],
     hsl: [0, 100, 50],
