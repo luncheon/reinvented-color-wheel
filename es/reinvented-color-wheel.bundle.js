@@ -73,14 +73,16 @@ function hsv2rgb(hsv) {
                         [_c, _x, _0]);
 }
 
-function clamp(val, min, max) {
+function clamp$1(val, min, max) {
   return Math.min(Math.max(val, min), max);
 }
 
-var clamp_1 = clamp;
+var clamp_1 = clamp$1;
+
+var clamp = clamp_1;
 
 function componentToHex(c) {
-  var value = Math.round(clamp_1(c, 0, 255));
+  var value = Math.round(clamp(c, 0, 255));
   var hex   = value.toString(16);
 
   return hex.length == 1 ? "0" + hex : hex;
