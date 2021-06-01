@@ -136,6 +136,31 @@ const App = () => {
 }
 ```
 
+## Svelte Action
+
+A wrapper as a [Svelte action](https://svelte.dev/tutorial/actions) is exported.  
+The options above except for `appendTo` can be specified, and each option is optional. When the color wheel changes the color, a `change` event is dispached. In the `detail` of the event, all color variants (hsv, hsl, rgb, hex) are filled.
+
+```js
+<script>
+  import ReinventedColorWheel from 'reinvented-color-wheel/svelte'
+
+  let hex = "#abc"
+  const changeEvent = ({detail}) => {
+    hex = details.hex
+  }
+</script>
+<div use:ReinventedColorWheel={{
+    hex, 
+    // hsv:[0, 100, 100],
+    // hsl:[0, 100, 50],
+    // rgb:[255, 0, 0],
+    wheelDiameter:200, 
+    wheelThickness:20,
+    handleDiameter:16,
+    wheelReflectsSaturation:true
+  }} on:change={changeEvent}/>
+```
 
 ## License
 
