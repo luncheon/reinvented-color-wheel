@@ -9,7 +9,7 @@ import { onDrag } from './on-drag'
 import { window } from './window'
 
 export interface ReinventedColorWheelOptions {
-  readonly appendTo: HTMLElement
+  readonly appendTo: HTMLElement | DocumentFragment
   readonly hsv?: Readonly<[number, number, number]>
   readonly hsl?: Readonly<[number, number, number]>
   readonly rgb?: Readonly<[number, number, number]>

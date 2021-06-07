@@ -1,7 +1,7 @@
 import _rgb2hsv from './rgb2hsv';
 import _hsv2rgb from './hsv2rgb';
 export interface ReinventedColorWheelOptions {
-    readonly appendTo: HTMLElement;
+    readonly appendTo: HTMLElement | DocumentFragment;
     readonly hsv?: Readonly<[number, number, number]>;
     readonly hsl?: Readonly<[number, number, number]>;
     readonly rgb?: Readonly<[number, number, number]>;
