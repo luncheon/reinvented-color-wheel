@@ -104,6 +104,28 @@ colorWheel.redraw();
 ```
 
 
+# Web Components
+
+This package contains the Web Components wrapping the color wheel.  
+The tag is `<reinvented-color-wheel>`.  
+The options above except for `appendTo` can be specified with kebab-case, and each option is optional.  
+
+```html
+<!-- CSS is included in JS: no <link> is needed. -->
+<script src="reinvented-color-wheel/webcomponents/index.js"></script>
+
+<reinvented-color-wheel
+  hex="#ff3e00"
+  wheel-diameter="200"
+  wheel-thickness="20"
+  handle-diameter="16"
+  wheel-reflects-saturation="false"
+></reinvented-color-wheel>
+
+<!-- hsv, hsl or rgb can be specified as a comma-separated string. -->
+<reinvented-color-wheel rgb="255,62,0"></reinvented-color-wheel>
+```
+
 ## React Component
 
 This package contains the React component wrapping the color wheel.  
