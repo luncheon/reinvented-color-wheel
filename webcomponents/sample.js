@@ -21,11 +21,85 @@
     return Object.keys(obj).length === 0;
   }
   var tasks = new Set();
+  var is_hydrating = false;
+  function start_hydrating() {
+    is_hydrating = true;
+  }
+  function end_hydrating() {
+    is_hydrating = false;
+  }
+  function upper_bound(low, high, key, value) {
+    while (low < high) {
+      const mid = low + (high - low >> 1);
+      if (key(mid) <= value) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    return low;
+  }
+  function init_hydrate(target) {
+    if (target.hydrate_init)
+      return;
+    target.hydrate_init = true;
+    const children2 = target.childNodes;
+    const m = new Int32Array(children2.length + 1);
+    const p = new Int32Array(children2.length);
+    m[0] = -1;
+    let longest = 0;
+    for (let i = 0; i < children2.length; i++) {
+      const current = children2[i].claim_order;
+      const seqLen = upper_bound(1, longest + 1, (idx) => children2[m[idx]].claim_order, current) - 1;
+      p[i] = m[seqLen] + 1;
+      const newLen = seqLen + 1;
+      m[newLen] = i;
+      longest = Math.max(newLen, longest);
+    }
+    const lis = [];
+    const toMove = [];
+    let last = children2.length - 1;
+    for (let cur = m[longest] + 1; cur != 0; cur = p[cur - 1]) {
+      lis.push(children2[cur - 1]);
+      for (; last >= cur; last--) {
+        toMove.push(children2[last]);
+      }
+      last--;
+    }
+    for (; last >= 0; last--) {
+      toMove.push(children2[last]);
+    }
+    lis.reverse();
+    toMove.sort((a, b) => a.claim_order - b.claim_order);
+    for (let i = 0, j = 0; i < toMove.length; i++) {
+      while (j < lis.length && toMove[i].claim_order >= lis[j].claim_order) {
+        j++;
+      }
+      const anchor = j < lis.length ? lis[j] : null;
+      target.insertBefore(toMove[i], anchor);
+    }
+  }
   function append(target, node) {
-    target.appendChild(node);
+    if (is_hydrating) {
+      init_hydrate(target);
+      if (target.actual_end_child === void 0 || target.actual_end_child !== null && target.actual_end_child.parentElement !== target) {
+        target.actual_end_child = target.firstChild;
+      }
+      if (node !== target.actual_end_child) {
+        target.insertBefore(node, target.actual_end_child);
+      } else {
+        target.actual_end_child = node.nextSibling;
+      }
+    } else if (node.parentNode !== target) {
+      target.appendChild(node);
+    }
   }
   function insert(target, node, anchor) {
-    target.insertBefore(node, anchor || null);
+    if (is_hydrating && !anchor) {
+      append(target, node);
+    } else if (node.parentNode !== target || anchor && node.nextSibling !== anchor) {
+      target.insertBefore(node, anchor || null);
+    }
   }
   function detach(node) {
     node.parentNode.removeChild(node);
@@ -234,6 +308,7 @@
     $$.fragment = create_fragment2 ? create_fragment2($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
+        start_hydrating();
         const nodes = children(options.target);
         $$.fragment && $$.fragment.l(nodes);
         nodes.forEach(detach);
@@ -243,6 +318,7 @@
       if (options.intro)
         transition_in(component.$$.fragment);
       mount_component(component, options.target, options.anchor, options.customElement);
+      end_hydrating();
       flush();
     }
     set_current_component(parent_component);

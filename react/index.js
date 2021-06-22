@@ -16,7 +16,15 @@ export default (function (_a) {
         }
         else {
             wheelRef.current = new ReinventedColorWheel({
-                wheelThickness: wheelThickness, wheelDiameter: wheelDiameter, handleDiameter: handleDiameter, wheelReflectsSaturation: wheelReflectsSaturation, onChange: onChange, hsv: hsv, hsl: hsl, rgb: rgb, hex: hex,
+                wheelThickness: wheelThickness,
+                wheelDiameter: wheelDiameter,
+                handleDiameter: handleDiameter,
+                wheelReflectsSaturation: wheelReflectsSaturation,
+                onChange: onChange,
+                hsv: hsv,
+                hsl: hsl,
+                rgb: rgb,
+                hex: hex,
                 appendTo: elementRef.current,
             });
         }
