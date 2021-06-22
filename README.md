@@ -104,7 +104,7 @@ colorWheel.redraw();
 ```
 
 
-# Web Components
+## Web Components
 
 This package contains the Web Components wrapping the color wheel.  
 The tag is `<reinvented-color-wheel>`.  
