@@ -14,14 +14,17 @@
     "cjs/",
     "iife/",
     "react/index.d.ts",
-    "react/index.js"
+    "react/index.js",
+    "webcomponents/index.d.ts",
+    "webcomponents/index.js"
   ],
   "scripts": {
-    "clean": "rimraf css/*.min.css es/ cjs/ iife/",
-    "build": "npm run clean && npm run build:css:min && npm run build:es && npm run build:react && npm run build:bundle && npm run copy",
+    "clean": "rimraf css/*.min.css es/ cjs/ iife/ react/index.d.ts react/index.js react/sample.js webcomponents/index.js webcomponents/sample.js",
+    "build": "npm run clean && npm run build:css:min && npm run build:es && npm run build:react && npm run build:wc && npm run build:bundle && npm run copy",
     "build:css:min": "cleancss css/reinvented-color-wheel.css -o css/reinvented-color-wheel.min.css",
     "build:es": "tsc -p . --outDir es/",
     "build:react": "tsc -p react && esbuild --bundle --tsconfig=react/tsconfig.json --define:process.env.NODE_ENV=\\'development\\' --outfile=react/sample.js react/sample.tsx",
+    "build:wc": "node webcomponents/build.js",
     "build:bundle": "rollup -c",
     "copy": "copyfiles -f iife/reinvented-color-wheel.min.js css/reinvented-color-wheel.min.css docs/",
     "test": "jest",
@@ -34,7 +37,8 @@
     "color-picker",
     "vanilla",
     "vanilla-js",
-    "react"
+    "react",
+    "webcomponents"
   ],
   "author": "",
   "license": "WTFPL",
@@ -45,6 +49,7 @@
     "clean-css-cli": "^5.3.0",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.11.23",
+    "esbuild-svelte": "^0.5.1",
     "jest": "^27.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
