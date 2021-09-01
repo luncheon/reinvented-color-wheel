@@ -5,20 +5,20 @@
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __markAsModule = (target) => __defProp(target, "__esModule", {value: true});
+  var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
   var __commonJS = (cb, mod) => function __require() {
-    return mod || (0, cb[Object.keys(cb)[0]])((mod = {exports: {}}).exports, mod), mod.exports;
+    return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var __reExport = (target, module, desc) => {
     if (module && typeof module === "object" || typeof module === "function") {
       for (let key of __getOwnPropNames(module))
         if (!__hasOwnProp.call(target, key) && key !== "default")
-          __defProp(target, key, {get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable});
+          __defProp(target, key, { get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable });
     }
     return target;
   };
   var __toModule = (module) => {
-    return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? {get: () => module.default, enumerable: true} : {value: module, enumerable: true})), module);
+    return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
   };
 
   // node_modules/object-assign/index.js
@@ -8474,7 +8474,7 @@
               }
               if (type === "script") {
                 var div = ownerDocument.createElement("div");
-                div.innerHTML = "<script></script>";
+                div.innerHTML = "<script><\/script>";
                 var firstChild = div.firstChild;
                 domElement = div.removeChild(firstChild);
               } else if (typeof props.is === "string") {
@@ -20703,7 +20703,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       this._hex = ReinventedColorWheel2.rgb2hex(this._rgb);
       var invertTransform = function(x, y) {
         var m = _this._inverseTransform.multiply(new Matrix("matrix(1,0,0,1," + x + "," + y + ")"));
-        return {x: m.e, y: m.f};
+        return { x: m.e, y: m.f };
       };
       var onDragStart = function(element) {
         _this._inverseTransform = inverseTransform(element);
@@ -20880,7 +20880,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   // react/index.tsx
   var noop = () => {
   };
-  var react_default = ({wheelThickness, wheelDiameter, handleDiameter, wheelReflectsSaturation, onChange, hsv, hsl, rgb, hex}) => {
+  var react_default = ({ wheelThickness, wheelDiameter, handleDiameter, wheelReflectsSaturation, onChange, hsv, hsl, rgb, hex }) => {
     const elementRef = React.useRef(null);
     const wheelRef = React.useRef();
     const wheel = wheelRef.current;
@@ -20931,15 +20931,15 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     const [handleDiameter, setHandleDiameter] = (0, import_react.useState)(20);
     const [wheelReflectsSaturation, setWheelReflectsSaturation] = (0, import_react.useState)(true);
     return /* @__PURE__ */ import_react.default.createElement("div", {
-      style: {display: "flex"}
+      style: { display: "flex" }
     }, /* @__PURE__ */ import_react.default.createElement("div", {
-      style: {flex: "none", display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: 32}
+      style: { flex: "none", display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: 32 }
     }, /* @__PURE__ */ import_react.default.createElement("label", null, "hex"), /* @__PURE__ */ import_react.default.createElement("input", {
       type: "color",
       value: hex,
       onChange: (e) => setHex(e.target.value)
     }), /* @__PURE__ */ import_react.default.createElement("label", {
-      style: {marginTop: 16}
+      style: { marginTop: 16 }
     }, "wheelDiameter"), /* @__PURE__ */ import_react.default.createElement("input", {
       type: "range",
       value: wheelDiameter,
@@ -20947,7 +20947,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       max: 1e3,
       onChange: (e) => setWheelDiameter(e.target.valueAsNumber)
     }), /* @__PURE__ */ import_react.default.createElement("label", {
-      style: {marginTop: 16}
+      style: { marginTop: 16 }
     }, "wheelThickness"), /* @__PURE__ */ import_react.default.createElement("input", {
       type: "range",
       value: wheelThickness,
@@ -20955,7 +20955,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       max: wheelDiameter / 2,
       onChange: (e) => setWheelThickness(e.target.valueAsNumber)
     }), /* @__PURE__ */ import_react.default.createElement("label", {
-      style: {marginTop: 16}
+      style: { marginTop: 16 }
     }, "handleDiameter"), /* @__PURE__ */ import_react.default.createElement("input", {
       type: "range",
       value: handleDiameter,
@@ -20963,7 +20963,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       max: wheelDiameter / 2,
       onChange: (e) => setHandleDiameter(e.target.valueAsNumber)
     }), /* @__PURE__ */ import_react.default.createElement("label", {
-      style: {marginTop: 16}
+      style: { marginTop: 16 }
     }, /* @__PURE__ */ import_react.default.createElement("input", {
       type: "checkbox",
       checked: wheelReflectsSaturation,
@@ -20974,7 +20974,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       wheelThickness,
       handleDiameter,
       wheelReflectsSaturation,
-      onChange: ({hex: hex2}) => setHex(hex2)
+      onChange: ({ hex: hex2 }) => setHex(hex2)
     }));
   };
   import_react_dom.default.render(/* @__PURE__ */ import_react.default.createElement(App, null), document.body.appendChild(document.createElement("div")));

@@ -450,4 +450,4 @@ function createElementWithClass(tagName, className) {
     return element;
 }
 
-export default ReinventedColorWheel;
+export { ReinventedColorWheel as default };
