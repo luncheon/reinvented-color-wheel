@@ -455,4 +455,4 @@ var ReinventedColorWheel = (function () {
 
   return ReinventedColorWheel;
 
-}());
+})();

@@ -43,22 +43,23 @@
   "author": "",
   "license": "WTFPL",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.4",
-    "@types/react": "^17.0.19",
-    "clean-css-cli": "^5.3.3",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@types/react": "^17.0.31",
+    "clean-css-cli": "^5.4.2",
     "copyfiles": "^2.4.1",
-    "esbuild": "^0.12.24",
-    "esbuild-svelte": "^0.5.4",
-    "jest": "^27.1.0",
+    "esbuild": "^0.13.8",
+    "esbuild-svelte": "^0.5.6",
+    "jest": "^27.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.56.3",
+    "rollup": "^2.58.0",
     "rollup-plugin-filesize": "^9.1.1",
     "rollup-plugin-terser": "^7.0.2",
-    "ts-jest": "^27.0.5",
-    "typescript": "^4.4.2"
+    "terser": "^5.7.2",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "pure-color": "^1.3.0"

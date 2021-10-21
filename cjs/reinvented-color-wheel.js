@@ -356,12 +356,12 @@ var ReinventedColorWheel = /** @class */ (function () {
     };
     ReinventedColorWheel.default = ReinventedColorWheel;
     ReinventedColorWheel.defaultOptions = defaultOptions;
-    ReinventedColorWheel.hsv2hsl = _hsv2hsl__default['default'];
-    ReinventedColorWheel.hsl2hsv = _hsl2hsv__default['default'];
+    ReinventedColorWheel.hsv2hsl = _hsv2hsl__default["default"];
+    ReinventedColorWheel.hsl2hsv = _hsl2hsv__default["default"];
     ReinventedColorWheel.hsv2rgb = hsv2rgb;
     ReinventedColorWheel.rgb2hsv = rgb2hsv;
-    ReinventedColorWheel.rgb2hex = _rgb2hex__default['default'];
-    ReinventedColorWheel.hex2rgb = _hex2rgb__default['default'];
+    ReinventedColorWheel.rgb2hex = _rgb2hex__default["default"];
+    ReinventedColorWheel.hex2rgb = _hex2rgb__default["default"];
     return ReinventedColorWheel;
 }());
 function createElementWithClass(tagName, className) {

@@ -219,7 +219,7 @@
       on_disconnect: [],
       before_update: [],
       after_update: [],
-      context: new Map(parent_component ? parent_component.$$.context : options.context || []),
+      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
       callbacks: blank_object(),
       dirty,
       skip_bound: false,
