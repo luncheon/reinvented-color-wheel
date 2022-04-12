@@ -73,9 +73,13 @@
     input.value = value == null ? "" : value;
   }
   function set_style(node, key, value, important) {
-    node.style.setProperty(key, value, important ? "important" : "");
+    if (value === null) {
+      node.style.removeProperty(key);
+    } else {
+      node.style.setProperty(key, value, important ? "important" : "");
+    }
   }
-  var active_docs = new Set();
+  var managed_styles = new Map();
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -95,20 +99,20 @@
   function add_render_callback(fn) {
     render_callbacks.push(fn);
   }
-  var flushing = false;
   var seen_callbacks = new Set();
+  var flushidx = 0;
   function flush() {
-    if (flushing)
-      return;
-    flushing = true;
+    const saved_component = current_component;
     do {
-      for (let i = 0; i < dirty_components.length; i += 1) {
-        const component = dirty_components[i];
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
         set_current_component(component);
         update(component.$$);
       }
       set_current_component(null);
       dirty_components.length = 0;
+      flushidx = 0;
       while (binding_callbacks.length)
         binding_callbacks.pop()();
       for (let i = 0; i < render_callbacks.length; i += 1) {
@@ -124,8 +128,8 @@
       flush_callbacks.pop()();
     }
     update_scheduled = false;
-    flushing = false;
     seen_callbacks.clear();
+    set_current_component(saved_component);
   }
   function update($$) {
     if ($$.fragment !== null) {
