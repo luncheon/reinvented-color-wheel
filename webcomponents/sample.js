@@ -6,7 +6,7 @@
     return fn();
   }
   function blank_object() {
-    return Object.create(null);
+    return /* @__PURE__ */ Object.create(null);
   }
   function run_all(fns) {
     fns.forEach(run);
@@ -20,7 +20,6 @@
   function is_empty(obj) {
     return Object.keys(obj).length === 0;
   }
-  var tasks = new Set();
   var is_hydrating = false;
   function start_hydrating() {
     is_hydrating = true;
@@ -79,7 +78,6 @@
       node.style.setProperty(key, value, important ? "important" : "");
     }
   }
-  var managed_styles = new Map();
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -99,7 +97,7 @@
   function add_render_callback(fn) {
     render_callbacks.push(fn);
   }
-  var seen_callbacks = new Set();
+  var seen_callbacks = /* @__PURE__ */ new Set();
   var flushidx = 0;
   function flush() {
     const saved_component = current_component;
@@ -141,7 +139,7 @@
       $$.after_update.forEach(add_render_callback);
     }
   }
-  var outroing = new Set();
+  var outroing = /* @__PURE__ */ new Set();
   function transition_in(block, local) {
     if (block && block.i) {
       outroing.delete(block);
@@ -149,32 +147,6 @@
     }
   }
   var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
-  var boolean_attributes = new Set([
-    "allowfullscreen",
-    "allowpaymentrequest",
-    "async",
-    "autofocus",
-    "autoplay",
-    "checked",
-    "controls",
-    "default",
-    "defer",
-    "disabled",
-    "formnovalidate",
-    "hidden",
-    "ismap",
-    "loop",
-    "multiple",
-    "muted",
-    "nomodule",
-    "novalidate",
-    "open",
-    "playsinline",
-    "readonly",
-    "required",
-    "reversed",
-    "selected"
-  ]);
   function mount_component(component, target, anchor, customElement) {
     const { fragment, on_mount, on_destroy, after_update } = component.$$;
     fragment && fragment.m(target, anchor);
@@ -330,69 +302,69 @@
   // webcomponents/index.js
   (() => {
     var re = Object.create;
-    var D = Object.defineProperty;
+    var z = Object.defineProperty;
     var ne = Object.getOwnPropertyDescriptor;
     var ie = Object.getOwnPropertyNames;
     var se = Object.getPrototypeOf, he = Object.prototype.hasOwnProperty;
-    var ae = (e) => D(e, "__esModule", { value: true });
-    var b = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports);
-    var oe = (e, t, r) => {
+    var w = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports);
+    var ae = (e, t, r, n) => {
       if (t && typeof t == "object" || typeof t == "function")
-        for (let n of ie(t))
-          !he.call(e, n) && n !== "default" && D(e, n, { get: () => t[n], enumerable: !(r = ne(t, n)) || r.enumerable });
+        for (let i of ie(t))
+          !he.call(e, i) && i !== r && z(e, i, { get: () => t[i], enumerable: !(n = ne(t, i)) || n.enumerable });
       return e;
-    }, E = (e) => oe(ae(D(e != null ? re(se(e)) : {}, "default", e && e.__esModule && "default" in e ? { get: () => e.default, enumerable: true } : { value: e, enumerable: true })), e);
-    var I = (e, t, r) => {
+    };
+    var E = (e, t, r) => (r = e != null ? re(se(e)) : {}, ae(t || !e || !e.__esModule ? z(r, "default", { value: e, enumerable: true }) : r, e));
+    var q = (e, t, r) => {
       if (!t.has(e))
         throw TypeError("Cannot " + r);
     };
-    var x = (e, t, r) => (I(e, t, "read from private field"), r ? r.call(e) : t.get(e)), W = (e, t, r) => {
+    var x = (e, t, r) => (q(e, t, "read from private field"), r ? r.call(e) : t.get(e)), D = (e, t, r) => {
       if (t.has(e))
         throw TypeError("Cannot add the same private member more than once");
       t instanceof WeakSet ? t.add(e) : t.set(e, r);
-    }, M = (e, t, r, n) => (I(e, t, "write to private field"), n ? n.call(e, r) : t.set(e, r), r);
-    var F = b((_e, q) => {
-      function le(e) {
+    }, W = (e, t, r, n) => (q(e, t, "write to private field"), n ? n.call(e, r) : t.set(e, r), r);
+    var O = w((xe, F) => {
+      function oe(e) {
         var t = e[0], r = e[1] / 100, n = e[2] / 100, i, s;
         return n === 0 ? [0, 0, 0] : (n *= 2, r *= n <= 1 ? n : 2 - n, s = (n + r) / 2, i = 2 * r / (n + r), [t, i * 100, s * 100]);
       }
-      q.exports = le;
+      F.exports = oe;
     });
-    var j = b((Se, O) => {
-      function ue(e) {
+    var B = w((_e, j) => {
+      function le(e) {
         var t = e[0], r = e[1] / 100, n = e[2] / 100, i, s;
         return s = (2 - r) * n, i = r * n, i /= s <= 1 ? s : 2 - s, i = i || 0, s /= 2, [t, i * 100, s * 100];
       }
-      O.exports = ue;
+      j.exports = le;
     });
-    var G = b((Ce, B) => {
-      function ce(e, t, r) {
+    var X = w((ye, G) => {
+      function ue(e, t, r) {
         return Math.min(Math.max(e, t), r);
       }
-      B.exports = ce;
+      G.exports = ue;
     });
-    var Y = b((He, X) => {
-      var ve = G();
+    var N = w((Ce, Y) => {
+      var ce = X();
       function y(e) {
-        var t = Math.round(ve(e, 0, 255)), r = t.toString(16);
+        var t = Math.round(ce(e, 0, 255)), r = t.toString(16);
         return r.length == 1 ? "0" + r : r;
       }
-      function de(e) {
+      function ve(e) {
         var t = e.length === 4 ? y(e[3] * 255) : "";
         return "#" + y(e[0]) + y(e[1]) + y(e[2]) + t;
       }
-      X.exports = de;
+      Y.exports = ve;
     });
-    var K = b((De, N) => {
-      function pe(e) {
+    var Q = w((He, K) => {
+      function de(e) {
         for (var t = "#", r = 1; r < e.length; r++) {
           var n = e.charAt(r);
           t += n + n;
         }
         return t;
       }
-      function me(e) {
-        (e.length === 4 || e.length === 5) && (e = pe(e));
+      function pe(e) {
+        (e.length === 4 || e.length === 5) && (e = de(e));
         var t = [parseInt(e.substring(1, 3), 16), parseInt(e.substring(3, 5), 16), parseInt(e.substring(5, 7), 16)];
         if (e.length === 9) {
           var r = parseFloat((parseInt(e.substring(7, 9), 16) / 255).toFixed(2));
@@ -400,10 +372,10 @@
         }
         return t;
       }
-      N.exports = me;
+      K.exports = pe;
     });
-    var U = E(F()), V = E(j());
-    function R(e) {
+    var V = E(O()), J = E(B());
+    function M(e) {
       var t = e[0], r = e[1], n = e[2], i = Math.max(t, r, n), s = Math.min(t, r, n), o = i - s, l = o && 60 * (i === t ? (r - n) / o % 6 : i === r ? (n - t) / o + 2 : (t - r) / o + 4);
       return [l < 0 ? l + 360 : l, i && o * 100 / i, i * 100 / 255];
     }
@@ -411,21 +383,21 @@
       var t = e[0] / 60, r = e[1] / 100, n = e[2] / 100, i = n * r, s = i * (1 - Math.abs(t % 2 - 1)), o = n - i, l = (s + o) * 255 + 0.5 | 0, c = (i + o) * 255 + 0.5 | 0, h = o * 255 + 0.5 | 0, a = t | 0;
       return a === 1 ? [l, c, h] : a === 2 ? [h, c, l] : a === 3 ? [h, l, c] : a === 4 ? [l, h, c] : a === 5 ? [c, h, l] : [c, l, h];
     }
-    var J = E(Y()), Z = E(K());
+    var Z = E(N()), $ = E(Q());
     function T(e, t) {
-      return e ? [A(e[0]) ? Q(e[0]) : t[0], A(e[1]) ? C(e[1]) : t[1], A(e[2]) ? C(e[2]) : t[2]] : t;
+      return e ? [R(e[0]) ? U(e[0]) : t[0], R(e[1]) ? C(e[1]) : t[1], R(e[2]) ? C(e[2]) : t[2]] : t;
     }
     function L(e) {
-      return [Q(e[0]), C(e[1]), C(e[2])];
+      return [U(e[0]), C(e[1]), C(e[2])];
     }
-    function Q(e) {
+    function U(e) {
       var t = Math.round(e % 360 * 10) / 10;
       return t < 0 ? t + 360 : t;
     }
     function C(e) {
       return e < 0 ? 0 : e > 100 ? 100 : (e * 10 + 0.5 | 0) / 10;
     }
-    function A(e) {
+    function R(e) {
       return typeof e == "number" && isFinite(e);
     }
     var p = typeof globalThis != "undefined" ? globalThis : self;
@@ -453,7 +425,7 @@
       });
     };
     var m = { hsv: [0, 100, 100], hsl: [0, 100, 50], wheelDiameter: 200, wheelThickness: 20, handleDiameter: 16, wheelReflectsSaturation: true, onChange: function() {
-    } }, P = p.DOMMatrix || p.WebKitCSSMatrix || p.MSCSSMatrix, fe = function(e) {
+    } }, P = p.DOMMatrix || p.WebKitCSSMatrix || p.MSCSSMatrix, me = function(e) {
       for (var t = [e]; e = e.parentElement; )
         t.push(e);
       for (var r = new P(), n = t.length - 1; n >= 0; n--) {
@@ -464,23 +436,23 @@
         }
       }
       return r.inverse();
-    }, z = function(e, t) {
+    }, A = function(e, t) {
       return e === t || e[0] === t[0] && e[1] === t[1] && e[2] === t[2];
-    }, ge = function() {
+    }, fe = function() {
       function e(t) {
         var r = this;
         this.options = t, this.wheelDiameter = this.options.wheelDiameter || m.wheelDiameter, this.wheelThickness = this.options.wheelThickness || m.wheelThickness, this.handleDiameter = this.options.handleDiameter || m.handleDiameter, this.onChange = this.options.onChange || m.onChange, this.wheelReflectsSaturation = this.options.wheelReflectsSaturation !== void 0 ? this.options.wheelReflectsSaturation : m.wheelReflectsSaturation, this.rootElement = this.options.appendTo.appendChild(_("div", "reinvented-color-wheel")), this.hueWheelElement = this.rootElement.appendChild(_("canvas", "reinvented-color-wheel--hue-wheel")), this.hueWheelContext = this.hueWheelElement.getContext("2d"), this.hueHandleElement = this.rootElement.appendChild(_("div", "reinvented-color-wheel--hue-handle")), this.svSpaceElement = this.rootElement.appendChild(_("canvas", "reinvented-color-wheel--sv-space")), this.svSpaceContext = this.svSpaceElement.getContext("2d"), this.svHandleElement = this.rootElement.appendChild(_("div", "reinvented-color-wheel--sv-handle")), this._redrawHueWheel = function() {
           r._redrawHueWheelRequested = false;
           var h = r.wheelDiameter, a = h / 2, u = a - r.wheelThickness / 2, v = Math.PI / 180, d = r.wheelReflectsSaturation ? "," + r._hsl[1] + "%," + r._hsl[2] + "%)" : ",100%,50%)", g = r.hueWheelContext;
           g.clearRect(0, 0, h, h), g.lineWidth = r.wheelThickness;
-          for (var w = 0; w < 360; w++)
-            g.beginPath(), g.arc(a, a, u, (w - 90.7) * v, (w - 89.3) * v), g.strokeStyle = "hsl(" + w + d, g.stroke();
+          for (var b = 0; b < 360; b++)
+            g.beginPath(), g.arc(a, a, u, (b - 90.7) * v, (b - 89.3) * v), g.strokeStyle = "hsl(" + b + d, g.stroke();
         }, this.hueWheelContext.imageSmoothingEnabled = false, this.svSpaceContext.imageSmoothingEnabled = false, this._hsv = T(t.hsv ? t.hsv : t.hsl ? e.hsl2hsv(t.hsl) : t.rgb ? e.rgb2hsv(t.rgb) : t.hex ? e.rgb2hsv(e.hex2rgb(t.hex)) : void 0, m.hsv), this._hsl = L(e.hsv2hsl(this._hsv)), this._rgb = e.hsv2rgb(this._hsv), this._hex = e.rgb2hex(this._rgb);
         var n = function(h, a) {
           var u = r._inverseTransform.multiply(new P("matrix(1,0,0,1," + h + "," + a + ")"));
           return { x: u.e, y: u.f };
         }, i = function(h) {
-          r._inverseTransform = fe(h);
+          r._inverseTransform = me(h);
           var a = h.getBoundingClientRect();
           r._center = n(a.left + a.width / 2, a.top + a.height / 2);
         }, s = function(h) {
@@ -503,15 +475,15 @@
       return Object.defineProperty(e.prototype, "hsv", { get: function() {
         return this._hsv;
       }, set: function(t) {
-        z(this._hsv, t) || this._setHSV(t);
+        A(this._hsv, t) || this._setHSV(t);
       }, enumerable: false, configurable: true }), Object.defineProperty(e.prototype, "hsl", { get: function() {
         return this._hsl;
       }, set: function(t) {
-        z(this._hsl, t) || this._setHSV(e.hsl2hsv(t));
+        A(this._hsl, t) || this._setHSV(e.hsl2hsv(t));
       }, enumerable: false, configurable: true }), Object.defineProperty(e.prototype, "rgb", { get: function() {
         return this._rgb;
       }, set: function(t) {
-        z(this._rgb, t) || this._setHSV(e.rgb2hsv(t));
+        A(this._rgb, t) || this._setHSV(e.rgb2hsv(t));
       }, enumerable: false, configurable: true }), Object.defineProperty(e.prototype, "hex", { get: function() {
         return this._hex;
       }, set: function(t) {
@@ -539,29 +511,29 @@
       }, e.prototype._redrawSvHandle = function() {
         var t = this.svSpaceElement.width, r = this.svHandleElement.style, n = (this.wheelDiameter - t) / 2, i = this._hsv;
         r.left = n + t * i[1] / 100 + "px", r.top = n + t * (1 - i[2] / 100) + "px";
-      }, e.default = e, e.defaultOptions = m, e.hsv2hsl = V.default, e.hsl2hsv = U.default, e.hsv2rgb = k, e.rgb2hsv = R, e.rgb2hex = J.default, e.hex2rgb = Z.default, e;
-    }(), $ = ge;
+      }, e.default = e, e.defaultOptions = m, e.hsv2hsl = J.default, e.hsl2hsv = V.default, e.hsv2rgb = k, e.rgb2hsv = M, e.rgb2hex = Z.default, e.hex2rgb = $.default, e;
+    }(), ee = fe;
     function _(e, t) {
       var r = document.createElement(e);
       return r.className = t, r;
     }
-    var ee = ".reinvented-color-wheel,.reinvented-color-wheel--hue-handle,.reinvented-color-wheel--hue-wheel,.reinvented-color-wheel--sv-handle,.reinvented-color-wheel--sv-space{touch-action:manipulation;touch-action:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.reinvented-color-wheel{position:relative;display:inline-block;line-height:0;border-radius:50%}.reinvented-color-wheel--hue-wheel{border-radius:50%}.reinvented-color-wheel--sv-space{position:absolute;left:0;top:0;right:0;bottom:0;margin:auto}.reinvented-color-wheel--hue-handle,.reinvented-color-wheel--sv-handle{position:absolute;box-sizing:border-box;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #000 inset}.reinvented-color-wheel--hue-handle{pointer-events:none}";
-    var be = Object.freeze(["hsv", "hsl", "rgb", "hex", "wheel-diameter", "wheel-thickness", "handle-diameter", "wheel-reflects-saturation"]), f, S, te = class extends HTMLElement {
+    var te = ".reinvented-color-wheel,.reinvented-color-wheel--hue-handle,.reinvented-color-wheel--hue-wheel,.reinvented-color-wheel--sv-handle,.reinvented-color-wheel--sv-space{touch-action:manipulation;touch-action:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.reinvented-color-wheel{position:relative;display:inline-block;line-height:0;border-radius:50%}.reinvented-color-wheel--hue-wheel{border-radius:50%}.reinvented-color-wheel--sv-space{position:absolute;left:0;top:0;right:0;bottom:0;margin:auto}.reinvented-color-wheel--hue-handle,.reinvented-color-wheel--sv-handle{position:absolute;box-sizing:border-box;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #000 inset}.reinvented-color-wheel--hue-handle{pointer-events:none}";
+    var be = Object.freeze(["hsv", "hsl", "rgb", "hex", "wheel-diameter", "wheel-thickness", "handle-diameter", "wheel-reflects-saturation"]), f, S, I = class extends HTMLElement {
       constructor() {
         super();
-        W(this, f, 0);
-        W(this, S, () => {
-          M(this, f, 1);
+        D(this, f, 0);
+        D(this, S, () => {
+          W(this, f, 1);
           try {
-            let { colorWheel: t2 } = this;
-            this.setAttribute("hsv", t2.hsv), this.setAttribute("hsl", t2.hsl), this.setAttribute("rgb", t2.rgb), this.setAttribute("hex", t2.hex);
+            let { colorWheel: r2 } = this;
+            this.setAttribute("hsv", r2.hsv), this.setAttribute("hsl", r2.hsl), this.setAttribute("rgb", r2.rgb), this.setAttribute("hex", r2.hex);
           } finally {
-            M(this, f, 0);
+            W(this, f, 0);
           }
         });
-        let t = this.attachShadow({ mode: "open" });
-        t.appendChild(document.createElement("style")).textContent = ee, this.colorWheel = new $({ appendTo: t, onChange: (r) => {
-          x(this, S).call(this), this.dispatchEvent(new CustomEvent("change", { bubbles: true, detail: r }));
+        let r = this.attachShadow({ mode: "open" });
+        r.appendChild(document.createElement("style")).textContent = te, this.colorWheel = new ee({ appendTo: r, onChange: (n) => {
+          x(this, S).call(this), this.dispatchEvent(new CustomEvent("change", { bubbles: true, detail: n }));
         } });
       }
       static get observedAttributes() {
@@ -570,37 +542,37 @@
       connectedCallback() {
         String(this.colorWheel.hex) !== this.getAttribute("hex") && x(this, S).call(this);
       }
-      attributeChangedCallback(t, r, n) {
-        let i = this.colorWheel;
-        switch (t) {
+      attributeChangedCallback(r, n, i) {
+        let s = this.colorWheel;
+        switch (r) {
           case "hex":
-            x(this, f) || (i.hex = n);
+            x(this, f) || (s.hex = i);
             return;
           case "hsv":
           case "hsl":
           case "rgb":
             if (!x(this, f)) {
-              let s = n.split(",").map((o) => +o);
-              s[0] >= 0 && s[1] >= 0 && s[2] >= 0 && (i[t] = s);
+              let o = i.split(",").map((l) => +l);
+              o[0] >= 0 && o[1] >= 0 && o[2] >= 0 && (s[r] = o);
             }
             return;
           case "wheel-diameter":
-            i.wheelDiameter = +n, i.redraw();
+            s.wheelDiameter = +i, s.redraw();
             return;
           case "wheel-thickness":
-            i.wheelThickness = +n, i.redraw();
+            s.wheelThickness = +i, s.redraw();
             return;
           case "handle-diameter":
-            i.handleDiameter = +n, i.redraw();
+            s.handleDiameter = +i, s.redraw();
             return;
           case "wheel-reflects-saturation":
-            i.wheelReflectsSaturation = n !== "false", i.redraw();
+            s.wheelReflectsSaturation = i !== "false", s.redraw();
             return;
         }
       }
     };
-    f = new WeakMap(), S = new WeakMap();
-    customElements.define("reinvented-color-wheel", te);
+    f = /* @__PURE__ */ new WeakMap(), S = /* @__PURE__ */ new WeakMap();
+    customElements.define("reinvented-color-wheel", I);
   })();
 
   // webcomponents/sample.svelte
