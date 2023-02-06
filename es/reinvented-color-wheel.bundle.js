@@ -266,7 +266,7 @@ var ReinventedColorWheel = /** @class */ (function () {
             var center = wheelDiameter / 2;
             var radius = center - _this.wheelThickness / 2;
             var TO_RAD = Math.PI / 180;
-            var hslPostfix = _this.wheelReflectsSaturation ? "," + _this._hsl[1] + "%," + _this._hsl[2] + "%)" : ',100%,50%)';
+            var hslPostfix = _this.wheelReflectsSaturation ? ",".concat(_this._hsl[1], "%,").concat(_this._hsl[2], "%)") : ',100%,50%)';
             var ctx = _this.hueWheelContext;
             ctx.clearRect(0, 0, wheelDiameter, wheelDiameter);
             ctx.lineWidth = _this.wheelThickness;
@@ -288,7 +288,7 @@ var ReinventedColorWheel = /** @class */ (function () {
         this._rgb = ReinventedColorWheel.hsv2rgb(this._hsv);
         this._hex = ReinventedColorWheel.rgb2hex(this._rgb);
         var invertTransform = function (x, y) {
-            var m = _this._inverseTransform.multiply(new Matrix("matrix(1,0,0,1," + x + "," + y + ")"));
+            var m = _this._inverseTransform.multiply(new Matrix("matrix(1,0,0,1,".concat(x, ",").concat(y, ")")));
             return { x: m.e, y: m.f };
         };
         var onDragStart = function (element) {
@@ -369,8 +369,8 @@ var ReinventedColorWheel = /** @class */ (function () {
         this.svSpaceElement.width = this.svSpaceElement.height = (this.wheelDiameter - this.wheelThickness * 2) * Math.SQRT1_2;
         var hueHandleStyle = this.hueHandleElement.style;
         var svHandleStyle = this.svHandleElement.style;
-        hueHandleStyle.width = hueHandleStyle.height = svHandleStyle.width = svHandleStyle.height = this.handleDiameter + "px";
-        hueHandleStyle.marginLeft = hueHandleStyle.marginTop = svHandleStyle.marginLeft = svHandleStyle.marginTop = -this.handleDiameter / 2 + "px";
+        hueHandleStyle.width = hueHandleStyle.height = svHandleStyle.width = svHandleStyle.height = "".concat(this.handleDiameter, "px");
+        hueHandleStyle.marginLeft = hueHandleStyle.marginTop = svHandleStyle.marginLeft = svHandleStyle.marginTop = "".concat(-this.handleDiameter / 2, "px");
         this._redrawHueWheel();
         this._redrawHueHandle();
         this._redrawSvSpace();
@@ -416,23 +416,23 @@ var ReinventedColorWheel = /** @class */ (function () {
         ctx.fillRect(0, 0, sideLength, sideLength);
     };
     ReinventedColorWheel.prototype._updateSvBackground = function () {
-        this.svSpaceElement.style.backgroundColor = "hsl(" + this._hsv[0] + ",100%,50%)";
+        this.svSpaceElement.style.backgroundColor = "hsl(".concat(this._hsv[0], ",100%,50%)");
     };
     ReinventedColorWheel.prototype._redrawHueHandle = function () {
         var center = this.wheelDiameter / 2;
         var wheelRadius = center - this.wheelThickness / 2;
         var angle = (this._hsv[0] - 90) * Math.PI / 180;
         var hueHandleStyle = this.hueHandleElement.style;
-        hueHandleStyle.left = wheelRadius * Math.cos(angle) + center + "px";
-        hueHandleStyle.top = wheelRadius * Math.sin(angle) + center + "px";
+        hueHandleStyle.left = "".concat(wheelRadius * Math.cos(angle) + center, "px");
+        hueHandleStyle.top = "".concat(wheelRadius * Math.sin(angle) + center, "px");
     };
     ReinventedColorWheel.prototype._redrawSvHandle = function () {
         var svSpaceElementWidth = this.svSpaceElement.width;
         var svHandleStyle = this.svHandleElement.style;
         var offset = (this.wheelDiameter - svSpaceElementWidth) / 2;
         var hsv = this._hsv;
-        svHandleStyle.left = offset + svSpaceElementWidth * hsv[1] / 100 + "px";
-        svHandleStyle.top = offset + svSpaceElementWidth * (1 - hsv[2] / 100) + "px";
+        svHandleStyle.left = "".concat(offset + svSpaceElementWidth * hsv[1] / 100, "px");
+        svHandleStyle.top = "".concat(offset + svSpaceElementWidth * (1 - hsv[2] / 100), "px");
     };
     ReinventedColorWheel.default = ReinventedColorWheel;
     ReinventedColorWheel.defaultOptions = defaultOptions;

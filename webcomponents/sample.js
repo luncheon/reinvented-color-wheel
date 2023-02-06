@@ -34,7 +34,9 @@
     target.insertBefore(node, anchor || null);
   }
   function detach(node) {
-    node.parentNode.removeChild(node);
+    if (node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
   }
   function element(name) {
     return document.createElement(name);
@@ -100,13 +102,22 @@
   var seen_callbacks = /* @__PURE__ */ new Set();
   var flushidx = 0;
   function flush() {
+    if (flushidx !== 0) {
+      return;
+    }
     const saved_component = current_component;
     do {
-      while (flushidx < dirty_components.length) {
-        const component = dirty_components[flushidx];
-        flushidx++;
-        set_current_component(component);
-        update(component.$$);
+      try {
+        while (flushidx < dirty_components.length) {
+          const component = dirty_components[flushidx];
+          flushidx++;
+          set_current_component(component);
+          update(component.$$);
+        }
+      } catch (e) {
+        dirty_components.length = 0;
+        flushidx = 0;
+        throw e;
       }
       set_current_component(null);
       dirty_components.length = 0;
@@ -148,13 +159,13 @@
   }
   var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
   function mount_component(component, target, anchor, customElement) {
-    const { fragment, on_mount, on_destroy, after_update } = component.$$;
+    const { fragment, after_update } = component.$$;
     fragment && fragment.m(target, anchor);
     if (!customElement) {
       add_render_callback(() => {
-        const new_on_destroy = on_mount.map(run).filter(is_function);
-        if (on_destroy) {
-          on_destroy.push(...new_on_destroy);
+        const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
+        if (component.$$.on_destroy) {
+          component.$$.on_destroy.push(...new_on_destroy);
         } else {
           run_all(new_on_destroy);
         }
@@ -185,17 +196,20 @@
     set_current_component(component);
     const $$ = component.$$ = {
       fragment: null,
-      ctx: null,
+      ctx: [],
+      // state
       props,
       update: noop,
       not_equal,
       bound: blank_object(),
+      // lifecycle
       on_mount: [],
       on_destroy: [],
       on_disconnect: [],
       before_update: [],
       after_update: [],
       context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+      // everything else
       callbacks: blank_object(),
       dirty,
       skip_bound: false,
@@ -259,6 +273,9 @@
         this.$destroy = noop;
       }
       $on(type, callback) {
+        if (!is_function(callback)) {
+          return noop;
+        }
         const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
         callbacks.push(callback);
         return () => {
@@ -282,6 +299,9 @@
       this.$destroy = noop;
     }
     $on(type, callback) {
+      if (!is_function(callback)) {
+        return noop;
+      }
       const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
       callbacks.push(callback);
       return () => {
@@ -305,15 +325,15 @@
     var z = Object.defineProperty;
     var ne = Object.getOwnPropertyDescriptor;
     var ie = Object.getOwnPropertyNames;
-    var se = Object.getPrototypeOf, he = Object.prototype.hasOwnProperty;
+    var se = Object.getPrototypeOf, ae = Object.prototype.hasOwnProperty;
     var w = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports);
-    var ae = (e, t, r, n) => {
+    var he = (e, t, r, n) => {
       if (t && typeof t == "object" || typeof t == "function")
         for (let i of ie(t))
-          !he.call(e, i) && i !== r && z(e, i, { get: () => t[i], enumerable: !(n = ne(t, i)) || n.enumerable });
+          !ae.call(e, i) && i !== r && z(e, i, { get: () => t[i], enumerable: !(n = ne(t, i)) || n.enumerable });
       return e;
     };
-    var E = (e, t, r) => (r = e != null ? re(se(e)) : {}, ae(t || !e || !e.__esModule ? z(r, "default", { value: e, enumerable: true }) : r, e));
+    var E = (e, t, r) => (r = e != null ? re(se(e)) : {}, he(t || !e || !e.__esModule ? z(r, "default", { value: e, enumerable: true }) : r, e));
     var q = (e, t, r) => {
       if (!t.has(e))
         throw TypeError("Cannot " + r);
@@ -380,8 +400,8 @@
       return [l < 0 ? l + 360 : l, i && o * 100 / i, i * 100 / 255];
     }
     function k(e) {
-      var t = e[0] / 60, r = e[1] / 100, n = e[2] / 100, i = n * r, s = i * (1 - Math.abs(t % 2 - 1)), o = n - i, l = (s + o) * 255 + 0.5 | 0, c = (i + o) * 255 + 0.5 | 0, h = o * 255 + 0.5 | 0, a = t | 0;
-      return a === 1 ? [l, c, h] : a === 2 ? [h, c, l] : a === 3 ? [h, l, c] : a === 4 ? [l, h, c] : a === 5 ? [c, h, l] : [c, l, h];
+      var t = e[0] / 60, r = e[1] / 100, n = e[2] / 100, i = n * r, s = i * (1 - Math.abs(t % 2 - 1)), o = n - i, l = (s + o) * 255 + 0.5 | 0, c = (i + o) * 255 + 0.5 | 0, a = o * 255 + 0.5 | 0, h = t | 0;
+      return h === 1 ? [l, c, a] : h === 2 ? [a, c, l] : h === 3 ? [a, l, c] : h === 4 ? [l, a, c] : h === 5 ? [c, a, l] : [c, l, a];
     }
     var Z = E(N()), $ = E(Q());
     function T(e, t) {
@@ -443,32 +463,32 @@
         var r = this;
         this.options = t, this.wheelDiameter = this.options.wheelDiameter || m.wheelDiameter, this.wheelThickness = this.options.wheelThickness || m.wheelThickness, this.handleDiameter = this.options.handleDiameter || m.handleDiameter, this.onChange = this.options.onChange || m.onChange, this.wheelReflectsSaturation = this.options.wheelReflectsSaturation !== void 0 ? this.options.wheelReflectsSaturation : m.wheelReflectsSaturation, this.rootElement = this.options.appendTo.appendChild(_("div", "reinvented-color-wheel")), this.hueWheelElement = this.rootElement.appendChild(_("canvas", "reinvented-color-wheel--hue-wheel")), this.hueWheelContext = this.hueWheelElement.getContext("2d"), this.hueHandleElement = this.rootElement.appendChild(_("div", "reinvented-color-wheel--hue-handle")), this.svSpaceElement = this.rootElement.appendChild(_("canvas", "reinvented-color-wheel--sv-space")), this.svSpaceContext = this.svSpaceElement.getContext("2d"), this.svHandleElement = this.rootElement.appendChild(_("div", "reinvented-color-wheel--sv-handle")), this._redrawHueWheel = function() {
           r._redrawHueWheelRequested = false;
-          var h = r.wheelDiameter, a = h / 2, u = a - r.wheelThickness / 2, v = Math.PI / 180, d = r.wheelReflectsSaturation ? "," + r._hsl[1] + "%," + r._hsl[2] + "%)" : ",100%,50%)", g = r.hueWheelContext;
-          g.clearRect(0, 0, h, h), g.lineWidth = r.wheelThickness;
+          var a = r.wheelDiameter, h = a / 2, u = h - r.wheelThickness / 2, v = Math.PI / 180, d = r.wheelReflectsSaturation ? ",".concat(r._hsl[1], "%,").concat(r._hsl[2], "%)") : ",100%,50%)", g = r.hueWheelContext;
+          g.clearRect(0, 0, a, a), g.lineWidth = r.wheelThickness;
           for (var b = 0; b < 360; b++)
-            g.beginPath(), g.arc(a, a, u, (b - 90.7) * v, (b - 89.3) * v), g.strokeStyle = "hsl(" + b + d, g.stroke();
+            g.beginPath(), g.arc(h, h, u, (b - 90.7) * v, (b - 89.3) * v), g.strokeStyle = "hsl(" + b + d, g.stroke();
         }, this.hueWheelContext.imageSmoothingEnabled = false, this.svSpaceContext.imageSmoothingEnabled = false, this._hsv = T(t.hsv ? t.hsv : t.hsl ? e.hsl2hsv(t.hsl) : t.rgb ? e.rgb2hsv(t.rgb) : t.hex ? e.rgb2hsv(e.hex2rgb(t.hex)) : void 0, m.hsv), this._hsl = L(e.hsv2hsl(this._hsv)), this._rgb = e.hsv2rgb(this._hsv), this._hex = e.rgb2hex(this._rgb);
-        var n = function(h, a) {
-          var u = r._inverseTransform.multiply(new P("matrix(1,0,0,1," + h + "," + a + ")"));
+        var n = function(a, h) {
+          var u = r._inverseTransform.multiply(new P("matrix(1,0,0,1,".concat(a, ",").concat(h, ")")));
           return { x: u.e, y: u.f };
-        }, i = function(h) {
-          r._inverseTransform = me(h);
-          var a = h.getBoundingClientRect();
-          r._center = n(a.left + a.width / 2, a.top + a.height / 2);
-        }, s = function(h) {
+        }, i = function(a) {
+          r._inverseTransform = me(a);
+          var h = a.getBoundingClientRect();
+          r._center = n(h.left + h.width / 2, h.top + h.height / 2);
+        }, s = function(a) {
           i(r.hueWheelElement);
-          var a = n(h.clientX, h.clientY), u = a.x - r._center.x, v = a.y - r._center.y, d = r.wheelDiameter / 2 - r.wheelThickness;
+          var h = n(a.clientX, a.clientY), u = h.x - r._center.x, v = h.y - r._center.y, d = r.wheelDiameter / 2 - r.wheelThickness;
           if (u * u + v * v < d * d)
             return false;
-          o(h);
-        }, o = function(h) {
-          var a = n(h.clientX, h.clientY), u = a.x - r._center.x, v = a.y - r._center.y, d = Math.atan2(v, u);
+          o(a);
+        }, o = function(a) {
+          var h = n(a.clientX, a.clientY), u = h.x - r._center.x, v = h.y - r._center.y, d = Math.atan2(v, u);
           r.hsv = [d * 180 / Math.PI + 90, r.hsv[1], r.hsv[2]];
-        }, l = function(h) {
-          var a = n(h.clientX, h.clientY), u = 100 / r.svSpaceElement.width, v = (a.x - r._center.x) * u + 50, d = (r._center.y - a.y) * u + 50;
+        }, l = function(a) {
+          var h = n(a.clientX, a.clientY), u = 100 / r.svSpaceElement.width, v = (h.x - r._center.x) * u + 50, d = (r._center.y - h.y) * u + 50;
           r.hsv = [r._hsv[0], v, d];
-        }, c = function(h) {
-          i(r.svSpaceElement), l(h);
+        }, c = function(a) {
+          i(r.svSpaceElement), l(a);
         };
         H(this.hueWheelElement, s, o), H(this.svSpaceElement, c, l), H(this.svHandleElement, c, l), this.redraw();
       }
@@ -495,7 +515,7 @@
       }, e.prototype.redraw = function() {
         this.hueWheelElement.width = this.hueWheelElement.height = this.wheelDiameter, this.svSpaceElement.width = this.svSpaceElement.height = (this.wheelDiameter - this.wheelThickness * 2) * Math.SQRT1_2;
         var t = this.hueHandleElement.style, r = this.svHandleElement.style;
-        t.width = t.height = r.width = r.height = this.handleDiameter + "px", t.marginLeft = t.marginTop = r.marginLeft = r.marginTop = -this.handleDiameter / 2 + "px", this._redrawHueWheel(), this._redrawHueHandle(), this._redrawSvSpace(), this._redrawSvHandle();
+        t.width = t.height = r.width = r.height = "".concat(this.handleDiameter, "px"), t.marginLeft = t.marginTop = r.marginLeft = r.marginTop = "".concat(-this.handleDiameter / 2, "px"), this._redrawHueWheel(), this._redrawHueHandle(), this._redrawSvSpace(), this._redrawSvHandle();
       }, e.prototype._setHSV = function(t) {
         var r = this._hsv, n = this._hsv = T(t, r), i = r[0] - n[0], s = r[1] - n[1] || r[2] - n[2];
         i && (this._hsl = [n[0], this._hsl[1], this._hsl[2]], this._redrawHueHandle(), this._updateSvBackground()), s && (this._hsl = L(e.hsv2hsl(n)), this._redrawSvHandle(), this.wheelReflectsSaturation && !this._redrawHueWheelRequested && (requestAnimationFrame(this._redrawHueWheel), this._redrawHueWheelRequested = true)), (i || s) && (this._rgb = e.hsv2rgb(n), this._hex = e.rgb2hex(this._rgb), this.onChange(this));
@@ -504,13 +524,13 @@
         var t = this.svSpaceElement.width, r = this.svSpaceContext, n = r.createLinearGradient(0, 0, t, 0), i = r.createLinearGradient(0, 0, 0, t);
         n.addColorStop(0, "rgba(255,255,255,1)"), n.addColorStop(1, "rgba(255,255,255,0)"), i.addColorStop(0, "rgba(0,0,0,0)"), i.addColorStop(1, "rgba(0,0,0,1)"), r.fillStyle = n, r.fillRect(0, 0, t, t), r.fillStyle = i, r.fillRect(0, 0, t, t);
       }, e.prototype._updateSvBackground = function() {
-        this.svSpaceElement.style.backgroundColor = "hsl(" + this._hsv[0] + ",100%,50%)";
+        this.svSpaceElement.style.backgroundColor = "hsl(".concat(this._hsv[0], ",100%,50%)");
       }, e.prototype._redrawHueHandle = function() {
         var t = this.wheelDiameter / 2, r = t - this.wheelThickness / 2, n = (this._hsv[0] - 90) * Math.PI / 180, i = this.hueHandleElement.style;
-        i.left = r * Math.cos(n) + t + "px", i.top = r * Math.sin(n) + t + "px";
+        i.left = "".concat(r * Math.cos(n) + t, "px"), i.top = "".concat(r * Math.sin(n) + t, "px");
       }, e.prototype._redrawSvHandle = function() {
         var t = this.svSpaceElement.width, r = this.svHandleElement.style, n = (this.wheelDiameter - t) / 2, i = this._hsv;
-        r.left = n + t * i[1] / 100 + "px", r.top = n + t * (1 - i[2] / 100) + "px";
+        r.left = "".concat(n + t * i[1] / 100, "px"), r.top = "".concat(n + t * (1 - i[2] / 100), "px");
       }, e.default = e, e.defaultOptions = m, e.hsv2hsl = J.default, e.hsl2hsv = V.default, e.hsv2rgb = k, e.rgb2hsv = M, e.rgb2hex = Z.default, e.hex2rgb = $.default, e;
     }(), ee = fe;
     function _(e, t) {
@@ -656,11 +676,13 @@
         set_style(label1, "margin-top", "16px");
         attr(input2, "type", "range");
         attr(input2, "min", input2_min_value = 2);
-        attr(input2, "max", input2_max_value = ctx[1] / 2);
+        attr(input2, "max", input2_max_value = /*wheelDiameter*/
+        ctx[1] / 2);
         set_style(label2, "margin-top", "16px");
         attr(input3, "type", "range");
         attr(input3, "min", input3_min_value = 2);
-        attr(input3, "max", input3_max_value = ctx[1] / 2);
+        attr(input3, "max", input3_max_value = /*wheelDiameter*/
+        ctx[1] / 2);
         set_style(label3, "margin-top", "16px");
         attr(input4, "type", "checkbox");
         set_style(label4, "margin-top", "16px");
@@ -669,11 +691,36 @@
         set_style(div, "flex-direction", "column");
         set_style(div, "align-items", "flex-start");
         set_style(div, "margin-right", "32px");
-        set_custom_element_data(reinvented_color_wheel, "hex", ctx[0]);
-        set_custom_element_data(reinvented_color_wheel, "wheel-diameter", ctx[1]);
-        set_custom_element_data(reinvented_color_wheel, "wheel-thickness", ctx[2]);
-        set_custom_element_data(reinvented_color_wheel, "handle-diameter", ctx[3]);
-        set_custom_element_data(reinvented_color_wheel, "wheel-reflects-saturation", ctx[4]);
+        set_custom_element_data(
+          reinvented_color_wheel,
+          "hex",
+          /*hex*/
+          ctx[0]
+        );
+        set_custom_element_data(
+          reinvented_color_wheel,
+          "wheel-diameter",
+          /*wheelDiameter*/
+          ctx[1]
+        );
+        set_custom_element_data(
+          reinvented_color_wheel,
+          "wheel-thickness",
+          /*wheelThickness*/
+          ctx[2]
+        );
+        set_custom_element_data(
+          reinvented_color_wheel,
+          "handle-diameter",
+          /*handleDiameter*/
+          ctx[3]
+        );
+        set_custom_element_data(
+          reinvented_color_wheel,
+          "wheel-reflects-saturation",
+          /*wheelReflectsSaturation*/
+          ctx[4]
+        );
         set_style(main, "display", "flex");
       },
       m(target, anchor) {
@@ -684,86 +731,204 @@
         append(label0, br0);
         append(label0, t1);
         append(label0, input0);
-        set_input_value(input0, ctx[0]);
+        set_input_value(
+          input0,
+          /*hex*/
+          ctx[0]
+        );
         append(div, t2);
         append(div, label1);
         append(label1, t3);
         append(label1, br1);
         append(label1, t4);
         append(label1, input1);
-        set_input_value(input1, ctx[1]);
+        set_input_value(
+          input1,
+          /*wheelDiameter*/
+          ctx[1]
+        );
         append(div, t5);
         append(div, label2);
         append(label2, t6);
         append(label2, br2);
         append(label2, t7);
         append(label2, input2);
-        set_input_value(input2, ctx[2]);
+        set_input_value(
+          input2,
+          /*wheelThickness*/
+          ctx[2]
+        );
         append(div, t8);
         append(div, label3);
         append(label3, t9);
         append(label3, br3);
         append(label3, t10);
         append(label3, input3);
-        set_input_value(input3, ctx[3]);
+        set_input_value(
+          input3,
+          /*handleDiameter*/
+          ctx[3]
+        );
         append(div, t11);
         append(div, label4);
         append(label4, input4);
-        input4.checked = ctx[4];
+        input4.checked = /*wheelReflectsSaturation*/
+        ctx[4];
         append(label4, t12);
         append(main, t13);
         append(main, reinvented_color_wheel);
         if (!mounted) {
           dispose = [
-            listen(input0, "input", ctx[5]),
-            listen(input1, "change", ctx[6]),
-            listen(input1, "input", ctx[6]),
-            listen(input2, "change", ctx[7]),
-            listen(input2, "input", ctx[7]),
-            listen(input3, "change", ctx[8]),
-            listen(input3, "input", ctx[8]),
-            listen(input4, "change", ctx[9]),
-            listen(reinvented_color_wheel, "change", ctx[10])
+            listen(
+              input0,
+              "input",
+              /*input0_input_handler*/
+              ctx[5]
+            ),
+            listen(
+              input1,
+              "change",
+              /*input1_change_input_handler*/
+              ctx[6]
+            ),
+            listen(
+              input1,
+              "input",
+              /*input1_change_input_handler*/
+              ctx[6]
+            ),
+            listen(
+              input2,
+              "change",
+              /*input2_change_input_handler*/
+              ctx[7]
+            ),
+            listen(
+              input2,
+              "input",
+              /*input2_change_input_handler*/
+              ctx[7]
+            ),
+            listen(
+              input3,
+              "change",
+              /*input3_change_input_handler*/
+              ctx[8]
+            ),
+            listen(
+              input3,
+              "input",
+              /*input3_change_input_handler*/
+              ctx[8]
+            ),
+            listen(
+              input4,
+              "change",
+              /*input4_change_handler*/
+              ctx[9]
+            ),
+            listen(
+              reinvented_color_wheel,
+              "change",
+              /*change_handler*/
+              ctx[10]
+            )
           ];
           mounted = true;
         }
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          set_input_value(input0, ctx2[0]);
+        if (dirty & /*hex*/
+        1) {
+          set_input_value(
+            input0,
+            /*hex*/
+            ctx2[0]
+          );
         }
-        if (dirty & 2) {
-          set_input_value(input1, ctx2[1]);
+        if (dirty & /*wheelDiameter*/
+        2) {
+          set_input_value(
+            input1,
+            /*wheelDiameter*/
+            ctx2[1]
+          );
         }
-        if (dirty & 2 && input2_max_value !== (input2_max_value = ctx2[1] / 2)) {
+        if (dirty & /*wheelDiameter*/
+        2 && input2_max_value !== (input2_max_value = /*wheelDiameter*/
+        ctx2[1] / 2)) {
           attr(input2, "max", input2_max_value);
         }
-        if (dirty & 4) {
-          set_input_value(input2, ctx2[2]);
+        if (dirty & /*wheelThickness*/
+        4) {
+          set_input_value(
+            input2,
+            /*wheelThickness*/
+            ctx2[2]
+          );
         }
-        if (dirty & 2 && input3_max_value !== (input3_max_value = ctx2[1] / 2)) {
+        if (dirty & /*wheelDiameter*/
+        2 && input3_max_value !== (input3_max_value = /*wheelDiameter*/
+        ctx2[1] / 2)) {
           attr(input3, "max", input3_max_value);
         }
-        if (dirty & 8) {
-          set_input_value(input3, ctx2[3]);
+        if (dirty & /*handleDiameter*/
+        8) {
+          set_input_value(
+            input3,
+            /*handleDiameter*/
+            ctx2[3]
+          );
         }
-        if (dirty & 16) {
-          input4.checked = ctx2[4];
+        if (dirty & /*wheelReflectsSaturation*/
+        16) {
+          input4.checked = /*wheelReflectsSaturation*/
+          ctx2[4];
         }
-        if (dirty & 1) {
-          set_custom_element_data(reinvented_color_wheel, "hex", ctx2[0]);
+        if (dirty & /*hex*/
+        1) {
+          set_custom_element_data(
+            reinvented_color_wheel,
+            "hex",
+            /*hex*/
+            ctx2[0]
+          );
         }
-        if (dirty & 2) {
-          set_custom_element_data(reinvented_color_wheel, "wheel-diameter", ctx2[1]);
+        if (dirty & /*wheelDiameter*/
+        2) {
+          set_custom_element_data(
+            reinvented_color_wheel,
+            "wheel-diameter",
+            /*wheelDiameter*/
+            ctx2[1]
+          );
         }
-        if (dirty & 4) {
-          set_custom_element_data(reinvented_color_wheel, "wheel-thickness", ctx2[2]);
+        if (dirty & /*wheelThickness*/
+        4) {
+          set_custom_element_data(
+            reinvented_color_wheel,
+            "wheel-thickness",
+            /*wheelThickness*/
+            ctx2[2]
+          );
         }
-        if (dirty & 8) {
-          set_custom_element_data(reinvented_color_wheel, "handle-diameter", ctx2[3]);
+        if (dirty & /*handleDiameter*/
+        8) {
+          set_custom_element_data(
+            reinvented_color_wheel,
+            "handle-diameter",
+            /*handleDiameter*/
+            ctx2[3]
+          );
         }
-        if (dirty & 16) {
-          set_custom_element_data(reinvented_color_wheel, "wheel-reflects-saturation", ctx2[4]);
+        if (dirty & /*wheelReflectsSaturation*/
+        16) {
+          set_custom_element_data(
+            reinvented_color_wheel,
+            "wheel-reflects-saturation",
+            /*wheelReflectsSaturation*/
+            ctx2[4]
+          );
         }
       },
       i: noop,
